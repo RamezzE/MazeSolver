@@ -3,19 +3,22 @@
 namespace Maze
 {
 
-    const int N = 5;
+    const int N = 10;
     bool visited[N][N] = {false};
     bool correct_path[N][N] = {false};
     bool min_correct_path[N][N] = {false};
 
     int steps = -1;
     int minSteps = 999999;
-    int startX , startY , endX = N - 1, endY = N - 1;
+    int startX, startY, endX = N - 1, endY = N - 1;
 
-    void solveMaze(std::vector<std::vector<Cell>> maze, int i, int j) {
+    void solveMaze(std::vector<std::vector<Cell>> maze, int i, int j)
+    {
 
-        for (int x = 0; x < N; x++) {
-            for (int y = 0; y < N; y++) {
+        for (int x = 0; x < N; x++)
+        {
+            for (int y = 0; y < N; y++)
+            {
                 visited[x][y] = false;
                 correct_path[x][y] = false;
                 min_correct_path[x][y] = false;
@@ -32,15 +35,14 @@ namespace Maze
     void solveMaze_helper(std::vector<std::vector<Cell>> maze, int i, int j) // i & j are startX and startY
     {
         // std::cout << "i: " << i << " j: " << j << std::endl;
-        if (i == endX && j == endY)
-        {
-            visited[i][j] = true;
-            steps++;
-            correct_path[i][j] = true;
-        }
 
-        if (i == endX && j == endY) // end point
+        visited[i][j] = true;
+        steps++;
+        correct_path[i][j] = true;
+
+        if (visited[endX][endY]) // end point
         {
+
             // std::cout << "Valid Path: " << std::endl;
             // for (int x = 0; x < N; x++)
             // {
@@ -65,23 +67,21 @@ namespace Maze
                 }
                 std::cout << minSteps << std::endl;
                 std::cout << std::endl;
-
             }
 
-            correct_path[N][N] = {0};
+            visited[i][j] = false;
+            steps--;
             return;
         }
-
-        visited[i][j] = true;
-        steps++;
-        correct_path[i][j] = true;
 
         // the 4 adjacent cells
 
         // right
         if (j + 1 < N)
         {
-            if (!visited[i][j + 1] && !maze[i][j].getWall(1)) {
+            if (!visited[i][j + 1] && !maze[i][j].getWall(1))
+            {
+                // std::cout << "RIGHT" << std::endl;
                 solveMaze_helper(maze, i, j + 1);
             }
         }
@@ -90,28 +90,30 @@ namespace Maze
         {
             if (!visited[i + 1][j] && !maze[i + 1][j].getWall(0))
             {
+                // std::cout << "DOWN" << std::endl;
                 solveMaze_helper(maze, i + 1, j);
             }
         }
-
 
         // top
         if (i - 1 >= 0)
         {
             if (!visited[i - 1][j] && !maze[i][j].getWall(0))
             {
+                // std::cout << "UP" << std::endl;
                 solveMaze_helper(maze, i - 1, j);
             }
         }
-        
+
         // left
         if (j - 1 >= 0)
         {
-            if (!visited[i][j - 1] && !maze[i][j - 1].getWall(1)) {
+            if (!visited[i][j - 1] && !maze[i][j - 1].getWall(1))
+            {
+                // std::cout << "LEFT" << std::endl;
                 solveMaze_helper(maze, i, j - 1);
             }
         }
-        
 
         visited[i][j] = false;
         steps--;

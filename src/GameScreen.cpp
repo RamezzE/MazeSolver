@@ -8,7 +8,7 @@ GameScreen::GameScreen(Game *myGame)
 
 void GameScreen::init()
 {
-    int num = 5;
+    int num = 10;
     maze.resize(num);
     for (int i = 0; i < num; i++)
         maze[i].resize(num);
@@ -17,18 +17,10 @@ void GameScreen::init()
     w = game->width / num / 2;
     h = game->height / num / 2;
 
-    mazeBorder.setOutlineColor(sf::Color::White);
+    mazeBorder.setOutlineColor(sf::Color(21, 23, 44));
     mazeBorder.setOutlineThickness(5);
     mazeBorder.setSize(sf::Vector2f(w * num, h * num));
     mazeBorder.setFillColor(sf::Color::Transparent);
-
-    /*
-        {1, 1, 1, 1, 1},
-        {1, 0, 0, 1, 0},
-        {0, 1, 1, 1, 0},
-        {0, 1, 1, 0, 1},
-        {1, 1, 1, 1, 1}
-    */
 
     for (int i = 0; i < num; i++)
         for (int j = 0; j < maze[i].size(); j++)
@@ -38,6 +30,7 @@ void GameScreen::init()
             maze[i][j].setPosition(sf::Vector2f(++j * w, ++i * h));
             --j;
             --i;
+
             // if (i % 2 == 0)
             // {
             //     maze[i][j].setWall(0, true);
