@@ -12,7 +12,7 @@ Game::Game() {
 	height = myHeight;
 	
 	window->create(sf::VideoMode(width, height), "Maze Solver", sf::Style::Titlebar | sf::Style::Close);
-	window->setFramerateLimit(60);
+	window->setFramerateLimit(10);
 }
 
 void Game::changeScreen(GameState* state) {

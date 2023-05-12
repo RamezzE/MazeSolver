@@ -23,6 +23,7 @@ void solveMaze(const int arr[][N], int i, int j) // i & j are startX and startY
     if (arr[i][j] == 0)
         return;
 
+    
 
     if (visited[N - 1][N - 1]) // end point
     {

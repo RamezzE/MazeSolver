@@ -7,6 +7,7 @@
 #include "Game.hpp"
 #include "GameState.hpp"
 #include "Cell.hpp"
+#include "Maze.hpp"
 
 class GameScreen : public GameState
 {
@@ -23,6 +24,8 @@ private:
 
 	std::vector<std::vector<Cell>> maze;
 	sf::RectangleShape mazeBorder;
+
+	sf::RectangleShape player;
 
 };
 

@@ -8,7 +8,7 @@ GameScreen::GameScreen(Game *myGame)
 
 void GameScreen::init()
 {
-    int num = 10;
+    int num = 5;
     maze.resize(num);
     for (int i = 0; i < num; i++)
         maze[i].resize(num);
@@ -46,6 +46,11 @@ void GameScreen::init()
         }
 
     mazeBorder.setPosition(maze[0][0].getPosition());
+
+    player.setFillColor(sf::Color::Magenta);
+    player.setSize(sf::Vector2f(w / 2, h / 2));
+
+    player.setPosition(maze[0][0].getPosition());
 }
 
 void GameScreen::handleInput()
@@ -58,12 +63,22 @@ void GameScreen::handleInput()
         if (event.type == sf::Event::Closed)
             game->window->close();
 
+        if (event.type == sf::Event::KeyPressed)
+        {
+            if (event.key.code == sf::Keyboard::Enter)
+            {
+                std::cout << "Solving Maze..." << std::endl;
+                Maze::solveMaze(maze, 0, 0);
+                std::cout << "Done" << std::endl;
+            }
+        }
+
         if (event.type == sf::Event::MouseButtonPressed)
         {
             for (int i = 0; i < maze.size(); i++)
                 for (int j = 0; j < maze[i].size(); j++)
                     maze[i][j].handleInput(event);
-            
+
             if (event.mouseButton.button == sf::Mouse::Right)
             {
 
@@ -101,4 +116,5 @@ void GameScreen::draw()
             maze[i][j].renderLines(game->window);
 
     game->window->draw(mazeBorder);
+    game->window->draw(player);
 }
