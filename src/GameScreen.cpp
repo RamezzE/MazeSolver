@@ -31,11 +31,11 @@ void GameScreen::init()
             --j;
             --i;
 
-            // if (i % 2 == 0)
-            // {
-            //     maze[i][j].setWall(0, true);
-            //     maze[i][j].setWall(1, true);
-            // }
+            if (i % 2 == 0)
+            {
+                maze[i][j].setWall(0, true);
+                maze[i][j].setWall(1, true);
+            }
         }
 
     mazeBorder.setPosition(maze[0][0].getPosition());
@@ -60,9 +60,7 @@ void GameScreen::handleInput()
         {
             if (event.key.code == sf::Keyboard::Enter)
             {
-                std::cout << "Solving Maze..." << std::endl;
-                Maze::solveMaze(maze, 0, 0);
-                std::cout << "Done" << std::endl;
+                std::thread{&Maze::solveMaze,std::ref(maze), 0, 0}.detach();
             }
         }
 
@@ -110,4 +108,5 @@ void GameScreen::draw()
 
     game->window->draw(mazeBorder);
     game->window->draw(player);
+
 }

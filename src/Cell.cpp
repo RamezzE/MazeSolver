@@ -2,7 +2,9 @@
 
 Cell::Cell()
 {
-    cell.setFillColor(sf::Color(224, 223, 224));
+    color = sf::Color(224, 223, 224);
+
+    cell.setFillColor(color);
     cell.setOutlineColor(sf::Color::Yellow);
 
     for (int i = 0; i < 2; i++)
@@ -10,6 +12,8 @@ Cell::Cell()
 
     wall[0] = false;
     wall[1] = false;
+
+    color = sf::Color(224, 223, 224);
 }
 
 void Cell::setPosition(sf::Vector2f position)
@@ -38,6 +42,15 @@ void Cell::setWall(int index, bool value)
 void Cell::setVisited(bool value)
 {
     visited = value;
+}
+
+void Cell::setColor(sf::Color c) {
+    cell.setFillColor(c);
+}
+
+void Cell::resetColor()
+{
+    cell.setFillColor(this->color);
 }
 
 bool Cell::getWall(int index)

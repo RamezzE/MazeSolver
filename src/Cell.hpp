@@ -12,6 +12,9 @@ public:
     void setSize(sf::Vector2f size);
     void setWall(int index, bool value);
     void setVisited(bool value);
+    void setColor(sf::Color color);
+    
+    void resetColor();
 
     bool getWall(int index);
 
@@ -35,6 +38,8 @@ private:
     bool visited;
     bool current;
     bool mouseOver;
+
+    sf::Color color;
 
     sf::RectangleShape line[2];
 };

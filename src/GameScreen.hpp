@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <thread>
 
 #include "Definitions.hpp"
 #include "Game.hpp"
