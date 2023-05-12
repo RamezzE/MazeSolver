@@ -8,28 +8,27 @@ GameScreen::GameScreen(Game *myGame)
 
 void GameScreen::init()
 {
-    int num = 10;
-    maze.resize(num);
-    for (int i = 0; i < num; i++)
-        maze[i].resize(num);
+    const int N = 20;
+    maze.resize(N);
+
+    for (int i = 0; i < N; i++)
+        maze[i].resize(N);
 
     int w, h;
-    w = game->width / num / 2;
-    h = game->height / num / 2;
+    w = game->width*0.9 / N;
+    h = game->height*0.9 / N;
 
     mazeBorder.setOutlineColor(sf::Color(21, 23, 44));
-    mazeBorder.setOutlineThickness(5);
-    mazeBorder.setSize(sf::Vector2f(w * num, h * num));
+    mazeBorder.setOutlineThickness(10);
+    mazeBorder.setSize(sf::Vector2f(w * N, h * N));
     mazeBorder.setFillColor(sf::Color::Transparent);
 
-    for (int i = 0; i < num; i++)
+    for (int i = 0; i < N; i++)
         for (int j = 0; j < maze[i].size(); j++)
         {
             maze[i][j] = Cell();
             maze[i][j].setSize(sf::Vector2f(w, h));
-            maze[i][j].setPosition(sf::Vector2f(++j * w, ++i * h));
-            --j;
-            --i;
+            maze[i][j].setPosition(sf::Vector2f((j + 1) * w, (i + 1) * h));
 
             if (i % 2 == 0)
             {
@@ -43,7 +42,19 @@ void GameScreen::init()
     player.setFillColor(sf::Color::Magenta);
     player.setSize(sf::Vector2f(w / 2, h / 2));
 
-    player.setPosition(maze[0][0].getPosition());
+    player.setPosition(maze[0][0].getGlobalBounds().left + maze[0][0].getGlobalBounds().width / 4, maze[0][0].getGlobalBounds().top + maze[0][0].getGlobalBounds().height / 4);
+
+    footprints.resize(N);
+    for (int i = 0; i < N; i++)
+        footprints[i].resize(N);
+
+    for (int i = 0;i<footprints.size();i++) {
+        for (int j = 0;j<footprints.size();j++) {
+            footprints[i][j] = sf::RectangleShape(player);
+            footprints[i][j].setFillColor(sf::Color::Transparent);
+            footprints[i][j].setPosition(maze[i][j].getGlobalBounds().left + maze[i][j].getGlobalBounds().width / 4, maze[i][j].getGlobalBounds().top + maze[i][j].getGlobalBounds().height / 4);
+        }
+    }
 }
 
 void GameScreen::handleInput()
@@ -53,14 +64,17 @@ void GameScreen::handleInput()
     while (game->window->pollEvent(event))
     {
         // window closes if close button pressed
-        if (event.type == sf::Event::Closed)
+        if (event.type == sf::Event::Closed) {
             game->window->close();
+            for (int i = 0;i<myThreads.size();i++)
+                myThreads[i].~thread();
+        }
 
         if (event.type == sf::Event::KeyPressed)
         {
-            if (event.key.code == sf::Keyboard::Enter)
-            {
-                std::thread{&Maze::solveMaze,std::ref(maze), 0, 0}.detach();
+            if (event.key.code == sf::Keyboard::Enter) {
+                myThreads.push_back(std::thread{&Maze::solveMaze, std::ref(maze), 0, 0, maze.size()-1,maze[0].size()-1, std::ref(player), std::ref(footprints)});
+                myThreads.back().detach();
             }
         }
 
@@ -98,15 +112,17 @@ void GameScreen::update(const float dt)
 
 void GameScreen::draw()
 {
+    game->window->draw(mazeBorder);
+
     for (int i = 0; i < maze.size(); i++)
-        for (int j = 0; j < maze[i].size(); j++)
+        for (int j = 0; j < maze[i].size(); j++) {
             maze[i][j].renderCells(game->window);
+            game->window->draw(footprints[i][j]);
+        }
 
     for (int i = 0; i < maze.size(); i++)
         for (int j = 0; j < maze[i].size(); j++)
             maze[i][j].renderLines(game->window);
 
-    game->window->draw(mazeBorder);
     game->window->draw(player);
-
 }

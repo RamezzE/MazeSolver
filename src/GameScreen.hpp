@@ -13,20 +13,21 @@
 class GameScreen : public GameState
 {
 public:
-	GameScreen(Game* myGame);
+	GameScreen(Game *myGame);
 
 	void handleInput();
 	void update(const float dt);
 	void draw();
-	
+
 private:
 	void init();
-	Game* game;
+	Game *game;
 
 	std::vector<std::vector<Cell>> maze;
+	std::vector<std::vector<sf::RectangleShape>> footprints;
 	sf::RectangleShape mazeBorder;
 
+	std::vector<std::thread> myThreads;
+
 	sf::RectangleShape player;
-
 };
-

@@ -1,2 +1,2 @@
-#define myWidth 800
-#define myHeight 600
+#define myWidth 1000
+#define myHeight 800

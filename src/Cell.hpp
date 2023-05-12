@@ -13,12 +13,14 @@ public:
     void setWall(int index, bool value);
     void setVisited(bool value);
     void setColor(sf::Color color);
-    
+
     void resetColor();
 
     bool getWall(int index);
 
     sf::Vector2f getPosition();
+
+    sf::FloatRect getGlobalBounds();
 
     bool isVisited();
 

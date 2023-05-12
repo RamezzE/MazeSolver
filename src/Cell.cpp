@@ -63,6 +63,10 @@ sf::Vector2f Cell::getPosition()
     return cell.getPosition();
 }
 
+sf::FloatRect Cell::getGlobalBounds() {
+    return cell.getGlobalBounds();
+}
+
 bool Cell::isVisited()
 {
     return visited;
