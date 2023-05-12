@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-#include "Cell.hpp"
+#include "Tile.hpp"
 #include <iostream>
 #include <thread>
 #include <unistd.h>
@@ -26,7 +26,7 @@ private:
 
     float sleepTime;
 
-    std::vector<std::vector<Cell>> maze;
+    std::vector<std::vector<Tile>> maze;
     std::vector<std::vector<sf::RectangleShape>> footprints;
 
     std::vector<std::vector<bool>> visited;

@@ -28,7 +28,7 @@ void Maze::init()
     for (int i = 0; i < row; i++)
         for (int j = 0; j < col; j++)
         {
-            maze[i][j] = Cell();
+            maze[i][j] = Tile();
             maze[i][j].setSize(sf::Vector2f(mazeW / col, mazeH / row));
 
             if (i % 2 == 0)
@@ -103,7 +103,7 @@ void Maze::render(sf::RenderWindow *window)
     for (int i = 0; i < maze.size(); i++)
         for (int j = 0; j < maze[i].size(); j++)
         {
-            maze[i][j].renderCells(window);
+            maze[i][j].renderTiles(window);
             window->draw(footprints[i][j]);
         }
 
@@ -179,7 +179,7 @@ void Maze::solveMaze_helper(int i, int j, int endX, int endY) // i & j are start
         return;
     }
 
-    // the 4 adjacent cells
+    // the 4 adjacent tiles
 
     // right
     if (j + 1 < col)

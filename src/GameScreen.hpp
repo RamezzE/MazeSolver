@@ -7,7 +7,7 @@
 #include "Definitions.hpp"
 #include "Game.hpp"
 #include "GameState.hpp"
-#include "Cell.hpp"
+#include "Tile.hpp"
 #include "Maze.hpp"
 
 class GameScreen : public GameState

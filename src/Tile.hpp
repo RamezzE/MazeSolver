@@ -3,10 +3,10 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-class Cell
+class Tile
 {
 public:
-    Cell();
+    Tile();
 
     void setPosition(sf::Vector2f position);
     void setSize(sf::Vector2f size);
@@ -28,12 +28,12 @@ public:
 
     void update(sf::RenderWindow *window);
 
-    void renderCells(sf::RenderWindow *window);
+    void renderTiles(sf::RenderWindow *window);
 
     void renderLines(sf::RenderWindow *window);
 
 private:
-    sf::RectangleShape cell;
+    sf::RectangleShape tile;
 
     bool wall[2]; // top, , right
 
