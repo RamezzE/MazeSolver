@@ -1,136 +1,232 @@
 #include "Maze.hpp"
 
-namespace Maze
+Maze::Maze() {}
+
+Maze::Maze(int row, int col, sf::Vector2f size, sf::Vector2f position)
+{
+    this->row = row;
+    this->col = col;
+
+    mazeW = size.x;
+    mazeH = size.y;
+
+    maze.resize(row);
+    for (int i = 0; i < row; i++)
+        maze[i].resize(col);
+
+    sleepTime = 50000;
+    steps = -1;
+    minSteps = 999999;
+
+    init();
+    setPosition(position);
+}
+
+void Maze::init()
 {
 
-    int steps = -1;
-    int minSteps = 999999;
-
-    float sleepTime = 50000;
-    std::vector<std::vector<bool>> visited;
-    std::vector<std::vector<bool>> correct_path;
-    std::vector<std::vector<bool>> min_correct_path;
-
-    void XX(bool backTrack, std::vector<std::vector<Cell>> &maze, int i, int j, sf::RectangleShape &player, std::vector<std::vector<sf::RectangleShape>> &footprints)
-    {
-
-        visited[i][j] = !backTrack;
-        correct_path[i][j] = !backTrack;
-
-        if (backTrack)
+    for (int i = 0; i < row; i++)
+        for (int j = 0; j < col; j++)
         {
-            steps--;
-            footprints[i][j].setFillColor(sf::Color(255, 0, 0, 50));
-        }
-        else
-        {
-            steps++;
-            footprints[i][j].setFillColor(sf::Color(100, 100, 100, 50));
-        }
-        player.setPosition(maze[i][j].getGlobalBounds().left + maze[i][j].getGlobalBounds().width / 4, maze[i][j].getGlobalBounds().top + maze[i][j].getGlobalBounds().height / 4);
-        usleep(sleepTime);
-    }
+            maze[i][j] = Cell();
+            maze[i][j].setSize(sf::Vector2f(mazeW / col, mazeH / row));
 
-    void solveMaze(std::vector<std::vector<Cell>> &maze, int startX, int startY, int endX, int endY, sf::RectangleShape &player, std::vector<std::vector<sf::RectangleShape>> &footprints)
-    {
-        int N = maze.size();
-
-        visited.assign(N, std::vector<bool>(N, false));
-        correct_path.assign(N, std::vector<bool>(N, false));
-        min_correct_path.assign(N, std::vector<bool>(N, false));
-
-        for (int x = 0; x < N; x++)
-            for (int y = 0; y < N; y++)
-                footprints[x][y].setFillColor(sf::Color::Transparent);
-
-        steps = -1;
-        minSteps = 999999;
-        endX = N - 1, endY = N - 1;
-        std::cout << "Solving Maze..." << std::endl;
-
-        solveMaze_helper(std::ref(maze), startX, startY, endX, endY, player, footprints);
-
-        for (int x = 0; x < maze.size(); x++)
-            for (int y = 0; y < maze[0].size(); y++)
+            if (i % 2 == 0)
             {
-                if (min_correct_path[x][y])
-                    footprints[x][y].setFillColor(sf::Color::Green);
+                maze[i][j].setWall(0, true);
+                maze[i][j].setWall(1, true);
             }
+        }
 
-        std::cout << "Done" << std::endl;
-    }
+    mazeBorder.setOutlineColor(sf::Color(21, 23, 44));
+    mazeBorder.setOutlineThickness(10);
+    mazeBorder.setSize(sf::Vector2f(mazeW, mazeH));
+    mazeBorder.setFillColor(sf::Color::Transparent);
 
-    void solveMaze_helper(std::vector<std::vector<Cell>> &maze, int i, int j, int endX, int endY, sf::RectangleShape &player, std::vector<std::vector<sf::RectangleShape>> &footprints) // i & j are startX and startY
-    {
-        int N = maze.size();
+    player.setFillColor(sf::Color::Magenta);
+    player.setSize(sf::Vector2f(maze[0][0].getGlobalBounds().width / 2, maze[0][0].getGlobalBounds().height / 2));
 
-        XX(false, maze, i, j, player, footprints);
+    footprints.resize(row);
+    for (int i = 0; i < row; i++)
+        footprints[i].resize(col);
 
-        if (visited[endX][endY]) // end point
+    for (int i = 0; i < footprints.size(); i++)
+        for (int j = 0; j < footprints[0].size(); j++)
         {
+            footprints[i][j] = sf::RectangleShape(player);
+            footprints[i][j].setFillColor(sf::Color::Transparent);
+        }
+}
 
-            // std::cout << "Valid Path: " << std::endl;
-            // for (int x = 0; x < N; x++)
-            // {
-            //     for (int y = 0; y < N; y++)
-            //         std::cout << correct_path[x][y] << " ";
-            //     std::cout << std::endl;
-            // }
+void Maze::setPosition(sf::Vector2f position)
+{
+    float posX = position.x;
+    float posY = position.y;
 
-            if (steps < minSteps)
+    for (int i = 0; i < row; i++)
+        for (int j = 0; j < col; j++)
+        {
+            maze[i][j].setPosition(sf::Vector2f(j * mazeW / col + posX, i * mazeH / row + posY));
+            footprints[i][j].setPosition(maze[i][j].getGlobalBounds().left + maze[i][j].getGlobalBounds().width / 4, maze[i][j].getGlobalBounds().top + maze[i][j].getGlobalBounds().height / 4);
+        }
+
+    mazeBorder.setPosition(maze[0][0].getPosition());
+    player.setPosition(maze[0][0].getGlobalBounds().left + maze[0][0].getGlobalBounds().width / 4, maze[0][0].getGlobalBounds().top + maze[0][0].getGlobalBounds().height / 4);
+}
+
+void Maze::setColors(sf::Color tileColor, sf::Color wallColor, sf::Color outlineColor)
+{
+    for (int i = 0; i < row; i++)
+        for (int j = 0; j < col; j++)
+            maze[i][j].setColor(tileColor, wallColor);
+
+    mazeBorder.setOutlineColor(outlineColor);
+}
+
+void Maze::handleInput(sf::Event event)
+{
+    for (int i = 0; i < maze.size(); i++)
+        for (int j = 0; j < maze[i].size(); j++)
+            maze[i][j].handleInput(event);
+}
+
+void Maze::update(sf::RenderWindow *window)
+{
+    for (int i = 0; i < maze.size(); i++)
+        for (int j = 0; j < maze[i].size(); j++)
+            maze[i][j].update(window);
+}
+
+void Maze::render(sf::RenderWindow *window)
+{
+
+    for (int i = 0; i < maze.size(); i++)
+        for (int j = 0; j < maze[i].size(); j++)
+        {
+            maze[i][j].renderCells(window);
+            window->draw(footprints[i][j]);
+        }
+
+    for (int i = 0; i < maze.size(); i++)
+        for (int j = 0; j < maze[i].size(); j++)
+            maze[i][j].renderLines(window);
+
+    window->draw(player);
+    window->draw(mazeBorder);
+}
+
+void Maze::solveMaze(int startX, int startY, int endX, int endY)
+{
+    steps = -1;
+    minSteps = 999999;
+
+    visited.assign(row, std::vector<bool>(col, false));
+    correct_path.assign(row, std::vector<bool>(col, false));
+    min_correct_path.assign(row, std::vector<bool>(col, false));
+
+    for (int i = 0; i < row; i++)
+        for (int j = 0; j < col; j++)
+            footprints[i][j].setFillColor(sf::Color::Transparent);
+
+    steps = -1;
+    minSteps = 999999;
+    std::cout << "Solving Maze..." << std::endl;
+
+    solveMaze_helper(startX, startY, endX, endY);
+
+    for (int x = 0; x < maze.size(); x++)
+        for (int y = 0; y < maze[0].size(); y++)
+            if (min_correct_path[x][y])
+                footprints[x][y].setFillColor(sf::Color(0, 255, 0, 100));
+
+    std::cout << "Done" << std::endl;
+}
+
+void Maze::solveMaze_helper(int i, int j, int endX, int endY) // i & j are startX and startY
+{
+    backTrackCheck(false, i, j);
+
+    if (visited[endX][endY]) // end point
+    {
+        // std::cout << "Valid Path: " << std::endl;
+        // for (int x = 0; x < N; x++)
+        // {
+        //     for (int y = 0; y < N; y++)
+        //         std::cout << correct_path[x][y] << " ";
+        //     std::cout << std::endl;
+        // }
+
+        if (steps < minSteps)
+        {
+            minSteps = steps;
+            for (int x = 0; x < maze.size(); x++)
+                for (int y = 0; y < maze[0].size(); y++)
+                    min_correct_path[x][y] = correct_path[x][y];
+
+            for (int x = 0; x < maze.size(); x++)
             {
-                minSteps = steps;
-                for (int x = 0; x < maze.size(); x++)
-                    for (int y = 0; y < maze[0].size(); y++)
-                        min_correct_path[x][y] = correct_path[x][y];
+                for (int y = 0; y < maze[0].size(); y++)
+                    std::cout << min_correct_path[x][y] << " ";
 
-                for (int x = 0; x < maze.size(); x++)
-                {
-                    for (int y = 0; y < maze[0].size(); y++)
-                        std::cout << min_correct_path[x][y] << " ";
-
-                    std::cout << std::endl;
-                }
-                std::cout << minSteps << std::endl;
                 std::cout << std::endl;
             }
-
-            XX(true, maze, i, j, player, footprints);
-
-            usleep(sleepTime);
-            return;
+            std::cout << minSteps << std::endl;
+            std::cout << std::endl;
         }
 
-        // the 4 adjacent cells
+        backTrackCheck(true, i, j);
 
-        // right
-        if (j + 1 < N)
-        {
-            if (!visited[i][j + 1] && !maze[i][j].getWall(1))
-                solveMaze_helper(maze, i, j + 1, endX, endY, player, footprints);
-        }
-        // bottom
-        if (i + 1 < N)
-        {
-            if (!visited[i + 1][j] && !maze[i + 1][j].getWall(0))
-                solveMaze_helper(maze, i + 1, j, endX, endY, player, footprints);
-        }
-
-        // top
-        if (i - 1 >= 0)
-        {
-            if (!visited[i - 1][j] && !maze[i][j].getWall(0))
-                solveMaze_helper(maze, i - 1, j, endX, endY,player, footprints);
-        }
-
-        // left
-        if (j - 1 >= 0)
-        {
-            if (!visited[i][j - 1] && !maze[i][j - 1].getWall(1))
-                solveMaze_helper(maze, i, j - 1, endX, endY,player, footprints);
-        }
-
-        XX(true, maze, i, j, player, footprints);
+        return;
     }
 
+    // the 4 adjacent cells
+
+    // right
+    if (j + 1 < col)
+    {
+        if (!visited[i][j + 1] && !maze[i][j].getWall(1))
+            solveMaze_helper(i, j + 1, endX, endY);
+    }
+    // bottom
+    if (i + 1 < row)
+    {
+        if (!visited[i + 1][j] && !maze[i + 1][j].getWall(0))
+            solveMaze_helper(i + 1, j, endX, endY);
+    }
+
+    // top
+    if (i - 1 >= row)
+    {
+        if (!visited[i - 1][j] && !maze[i][j].getWall(0))
+            solveMaze_helper(i - 1, j, endX, endY);
+    }
+
+    // left
+    if (j - 1 >= col)
+    {
+        if (!visited[i][j - 1] && !maze[i][j - 1].getWall(1))
+            solveMaze_helper(i, j - 1, endX, endY);
+    }
+
+    backTrackCheck(true, i, j);
+}
+
+void Maze::backTrackCheck(bool backTrack, int i, int j)
+{
+    visited[i][j] = !backTrack;
+    correct_path[i][j] = !backTrack;
+
+    if (backTrack)
+    {
+        steps--;
+        footprints[i][j].setFillColor(sf::Color(255, 0, 0, 50));
+    }
+    else
+    {
+        steps++;
+        footprints[i][j].setFillColor(sf::Color(100, 100, 100, 50));
+    }
+    player.setPosition(maze[i][j].getGlobalBounds().left + maze[i][j].getGlobalBounds().width / 4, maze[i][j].getGlobalBounds().top + maze[i][j].getGlobalBounds().height / 4);
+
+    usleep(sleepTime);
 }

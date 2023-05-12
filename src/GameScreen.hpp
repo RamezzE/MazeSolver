@@ -21,13 +21,10 @@ public:
 
 private:
 	void init();
+	void solveMaze();
 	Game *game;
 
-	std::vector<std::vector<Cell>> maze;
-	std::vector<std::vector<sf::RectangleShape>> footprints;
-	sf::RectangleShape mazeBorder;
+	Maze* maze;
 
 	std::vector<std::thread> myThreads;
-
-	sf::RectangleShape player;
 };

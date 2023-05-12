@@ -12,7 +12,7 @@ public:
     void setSize(sf::Vector2f size);
     void setWall(int index, bool value);
     void setVisited(bool value);
-    void setColor(sf::Color color);
+    void setColor(sf::Color tileColor, sf::Color wallColor);
 
     void resetColor();
 

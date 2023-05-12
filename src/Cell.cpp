@@ -44,8 +44,12 @@ void Cell::setVisited(bool value)
     visited = value;
 }
 
-void Cell::setColor(sf::Color c) {
-    cell.setFillColor(c);
+void Cell::setColor(sf::Color tileColor, sf::Color wallColor) {
+    cell.setFillColor(tileColor);
+
+    for (int i = 0;i<2;i++)
+        line[i].setFillColor(wallColor);
+
 }
 
 void Cell::resetColor()
