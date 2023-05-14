@@ -125,6 +125,7 @@ void Maze::clearMaze()
         for (int j = 0; j < col; j++)
         {
             maze[i][j].setColor(sf::Color::White, tileColor);
+            footprints[i][j].setFillColor(sf::Color::Transparent);
 
             maze[i][j].setWall(0, true);
             maze[i][j].setWall(1, true);
