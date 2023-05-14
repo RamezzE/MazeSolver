@@ -13,11 +13,11 @@ Maze::Maze(int row, int col, sf::Vector2f size, sf::Vector2f position)
     for (int i = 0; i < row; i++)
         maze[i].resize(col);
 
-    sleepTime = 1500000;
+    sleepTime = 15000;
     steps = -1;
     minSteps = 999999;
 
-    speedFactor = 250;
+    speedFactor = 1;
 
     init();
     setPosition(position);
@@ -124,9 +124,8 @@ void Maze::clearMaze()
     for (int i = 0; i < row; i++)
         for (int j = 0; j < col; j++)
         {
-            maze[i][j].setColor(sf::Color::White, sf::Color::Black);
-            footprints[i][j].setFillColor(sf::Color::Transparent);
-            
+            maze[i][j].setColor(sf::Color::White, tileColor);
+
             maze[i][j].setWall(0, true);
             maze[i][j].setWall(1, true);
 
@@ -166,7 +165,7 @@ void Maze::generateMaze_helper(int i, int j)
     {
         usleep(sleepTime / speedFactor);
         player.setPosition(maze[i][j].getGlobalBounds().left + maze[i][j].getGlobalBounds().width / 4, maze[i][j].getGlobalBounds().top + maze[i][j].getGlobalBounds().height / 4);
-        maze[i][j].setColor(tileColor, wallColor);
+        maze[i][j].setColor(tileColor, sf::Color::Magenta);
         visited[i][j] = true;
 
         std::vector<std::vector<int>> vec;
@@ -294,16 +293,6 @@ void Maze::solveMaze_helper(int i, int j, int endX, int endY) // i & j are start
             for (int x = 0; x < maze.size(); x++)
                 for (int y = 0; y < maze[0].size(); y++)
                     min_correct_path[x][y] = correct_path[x][y];
-
-            // for (int x = 0; x < maze.size(); x++)
-            // {
-            //     for (int y = 0; y < maze[0].size(); y++)
-            //         std::cout << min_correct_path[x][y] << " ";
-
-            //     std::cout << std::endl;
-            // }
-            // std::cout << minSteps << std::endl;
-            // std::cout << std::endl;
         }
 
         backTrackCheck(true, i, j);

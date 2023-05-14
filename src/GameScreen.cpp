@@ -1,6 +1,6 @@
 #include "GameScreen.hpp"
 
-int N = 20;
+int N = 30;
 
 GameScreen::GameScreen(Game *myGame)
 {
@@ -55,13 +55,13 @@ void GameScreen::handleInput()
                 maze->setSpeedFactor(1);
                 break;
             case sf::Keyboard::Num3:
-                maze->setSpeedFactor(2);
-                break;
-            case sf::Keyboard::Num4:
                 maze->setSpeedFactor(4);
                 break;
-            case sf::Keyboard::Num5:
+            case sf::Keyboard::Num4:
                 maze->setSpeedFactor(8);
+                break;
+            case sf::Keyboard::Num5:
+                maze->setSpeedFactor(12);
                 break;
             }
         }

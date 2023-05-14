@@ -5,7 +5,6 @@ Tile::Tile()
     color = sf::Color(224, 223, 224);
 
     tile.setFillColor(color);
-    tile.setOutlineColor(sf::Color::Yellow);
 
     for (int i = 0; i < 2; i++)
         line[i].setFillColor(sf::Color(21, 23, 44));
@@ -97,11 +96,6 @@ void Tile::update(sf::RenderWindow *window)
         mouseOver = true;
     else
         mouseOver = false;
-
-    // if (mouseOver)
-        // tile.setOutlineThickness(5);
-    // else
-        // tile.setOutlineThickness(0);
 }
 
 void Tile::renderTiles(sf::RenderWindow *window)

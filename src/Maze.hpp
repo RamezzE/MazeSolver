@@ -25,7 +25,9 @@ public:
     void render(sf::RenderWindow* window);
 
 private:
-    int mazeW, mazeH, row, col, steps, minSteps;
+    int row, col, steps, minSteps;
+
+    float mazeW, mazeH;
 
     float sleepTime;
     int speedFactor;
