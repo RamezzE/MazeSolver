@@ -131,14 +131,10 @@ void Maze::clearMaze()
             maze[i][j].setWall(1, true);
 
             if (i == 0)
-            {
                 maze[i][j].setWall(0, false);
-            }
 
             if (j == col - 1)
-            {
                 maze[i][j].setWall(1, false);
-            }
         }
 }
 
@@ -172,6 +168,7 @@ void Maze::generateMaze_helper(int i, int j)
         std::vector<std::vector<int>> vec;
 
         neighboursUnvisited(vec, i, j);
+
         int r;
         if (vec.empty())
             return;
@@ -208,6 +205,8 @@ void Maze::generateMaze_helper(int i, int j)
 void Maze::neighboursUnvisited(std::vector<std::vector<int>> &vec, int i, int j)
 {
     int x = 0;
+
+    // bottom
     if (i + 1 < row)
         if (!visited[i + 1][j])
         {
@@ -216,6 +215,7 @@ void Maze::neighboursUnvisited(std::vector<std::vector<int>> &vec, int i, int j)
             vec[x++].push_back(j);
         }
 
+    // top
     if (i - 1 >= 0)
         if (!visited[i - 1][j])
         {
@@ -224,6 +224,7 @@ void Maze::neighboursUnvisited(std::vector<std::vector<int>> &vec, int i, int j)
             vec[x++].push_back(j);
         }
 
+    // right
     if (j + 1 < col)
         if (!visited[i][j + 1])
         {
@@ -232,6 +233,7 @@ void Maze::neighboursUnvisited(std::vector<std::vector<int>> &vec, int i, int j)
             vec[x++].push_back(j + 1);
         }
 
+    // left
     if (j - 1 >= 0)
         if (!visited[i][j - 1])
         {
@@ -263,31 +265,19 @@ void Maze::solveMaze(int startX, int startY, int endX, int endY)
     for (int x = 0; x < maze.size(); x++)
         for (int y = 0; y < maze[0].size(); y++)
             if (min_correct_path[x][y])
-            {
                 footprints[x][y].setFillColor(sf::Color(0, 255, 0, 100));
-                // usleep(sleepTime / 4);
-            }
-            else {
+            else
                 footprints[x][y].setFillColor(sf::Color::Transparent);
-            }
 
     std::cout << "Done" << std::endl;
 }
 
 void Maze::solveMaze_helper(int i, int j, int endX, int endY) // i & j are startX and startY
-{
+{   
     backTrackCheck(false, i, j);
 
     if (visited[endX][endY]) // end point
     {
-        // std::cout << "Valid Path: " << std::endl;
-        // for (int x = 0; x < N; x++)
-        // {
-        //     for (int y = 0; y < N; y++)
-        //         std::cout << correct_path[x][y] << " ";
-        //     std::cout << std::endl;
-        // }
-
         if (steps < minSteps)
         {
             minSteps = steps;
@@ -297,12 +287,10 @@ void Maze::solveMaze_helper(int i, int j, int endX, int endY) // i & j are start
         }
 
         backTrackCheck(true, i, j);
-
         return;
     }
 
     // the 4 adjacent tiles
-
     // right
     if (j + 1 < col)
     {

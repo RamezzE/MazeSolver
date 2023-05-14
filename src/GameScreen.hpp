@@ -9,6 +9,7 @@
 #include "GameState.hpp"
 #include "Tile.hpp"
 #include "Maze.hpp"
+#include "Button.hpp"
 
 class GameScreen : public GameState
 {
@@ -26,5 +27,11 @@ private:
 
 	Maze* maze;
 
+	Button myButton;
+
+	sf::Font font;
+
 	std::vector<std::thread> myThreads;
+
+	sf::RectangleShape background;
 };
