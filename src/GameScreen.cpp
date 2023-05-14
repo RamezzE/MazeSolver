@@ -1,7 +1,6 @@
 #include "GameScreen.hpp"
 
-int N = 10;
-
+int N = 20;
 
 GameScreen::GameScreen(Game *myGame)
 {
@@ -11,11 +10,11 @@ GameScreen::GameScreen(Game *myGame)
 
 void GameScreen::init()
 {
-    sf::Vector2f size(game->width/2, game->height/2);
-    sf::Vector2f pos(game->width * 0.05, game->height *0.05);
+    sf::Vector2f size(game->width / 1.5, game->height / 1.5);
+    sf::Vector2f pos(game->width * 0.05, game->height * 0.05);
 
     maze = new Maze(N, N, size, pos);
-    maze->setColors(sf::Color(20, 22, 39,150), sf::Color(173, 172, 173), sf::Color(173, 172, 173));
+    maze->setColors(sf::Color(20, 22, 39, 150), sf::Color(173, 172, 173), sf::Color(173, 172, 173));
 }
 
 void GameScreen::handleInput()
@@ -38,6 +37,32 @@ void GameScreen::handleInput()
             {
                 myThreads.push_back(std::thread{&Maze::solveMaze, std::ref(maze), 0, 0, N - 1, N - 1});
                 myThreads.back().detach();
+                return;
+            }
+            if (event.key.code == sf::Keyboard::R)
+            {
+                myThreads.push_back(std::thread{&Maze::generateMaze, std::ref(maze)});
+                myThreads.back().detach();
+                return;
+            }
+
+            switch (event.key.code)
+            {
+            case sf::Keyboard::Num1:
+                maze->setSpeedFactor(0);
+                break;
+            case sf::Keyboard::Num2:
+                maze->setSpeedFactor(1);
+                break;
+            case sf::Keyboard::Num3:
+                maze->setSpeedFactor(2);
+                break;
+            case sf::Keyboard::Num4:
+                maze->setSpeedFactor(4);
+                break;
+            case sf::Keyboard::Num5:
+                maze->setSpeedFactor(8);
+                break;
             }
         }
 

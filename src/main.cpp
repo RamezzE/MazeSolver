@@ -1,4 +1,6 @@
 #include <iostream>
+#include <cstdlib>
+
 #include "GameScreen.hpp"
 #include "Game.hpp"
 #include "GameState.hpp"
@@ -82,6 +84,8 @@ void solveMaze(const int arr[][N], int i, int j) // i & j are startX and startY
 
 int main()
 {
+    srand(time(NULL));
+
     int maze[N][N] = {
         {1, 1, 1, 1, 1},
         {1, 0, 0, 1, 0},

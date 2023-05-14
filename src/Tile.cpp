@@ -10,8 +10,8 @@ Tile::Tile()
     for (int i = 0; i < 2; i++)
         line[i].setFillColor(sf::Color(21, 23, 44));
 
-    wall[0] = false;
-    wall[1] = false;
+    wall[0] = true;
+    wall[1] = true;
 
     color = sf::Color(224, 223, 224);
 }
