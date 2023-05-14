@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <vector>
 #include <thread>
 
 #include "Definitions.hpp"
@@ -27,7 +28,7 @@ private:
 
 	Maze* maze;
 
-	Button myButton;
+	std::vector<Button> myButtons;
 
 	sf::Font font;
 

@@ -5,12 +5,6 @@
 #include "Game.hpp"
 #include "GameState.hpp"
 
-template <class DataType>
-int min(DataType &a, DataType &b)
-{
-    return a < b ? a : b;
-}
-
 int main()
 {
     Game myGame;
