@@ -13,10 +13,12 @@ public:
     Maze();
     Maze(int row, int col, sf::Vector2f size, sf::Vector2f position);
 
+    void resize(sf::Vector2f size);
+
     void generateMaze();
     void solveMaze(int startX, int startY, int endX, int endY);
 
-    void resize(int row, int col);
+    void resizeGrid(int row, int col);
 
     void setPosition(sf::Vector2f position);
     void setColors(sf::Color tileColor, sf::Color wallColor, sf::Color outlineColor);

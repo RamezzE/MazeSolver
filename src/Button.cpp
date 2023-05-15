@@ -29,6 +29,8 @@ void Button::init()
     pressedColor = sf::Color(178, 178, 178);
 
     border.setFillColor(sf::Color::Transparent);
+
+    text.setString("Button");
 }
 
 void Button::setFont(sf::Font &font)
@@ -41,15 +43,30 @@ void Button::setCharacterSize(int size)
 {
     text.setCharacterSize(size);
     border.setSize(sf::Vector2f(text.getGlobalBounds().width * 1.1, size));
-    text.setOrigin(text.getGlobalBounds().left + text.getGlobalBounds().width / 2, text.getGlobalBounds().top + text.getGlobalBounds().height / 2);
+    sf::FloatRect temp = text.getGlobalBounds();
+    text.setOrigin(temp.left + temp.width / 2, temp.top + temp.height / 2);
+}
+
+void Button::setPosition(sf::Vector2f position)
+{
+    sprite.setPosition(position);
+    text.setPosition(position);
+
+    sf::FloatRect temp = text.getLocalBounds();
+    text.setOrigin(temp.left + temp.width / 2, temp.top + temp.height / 2);
+
+    temp = border.getLocalBounds();
+    border.setOrigin(temp.left + temp.width / 2, temp.top + temp.height / 2);
+    border.setPosition(position);
 }
 
 void Button::setText(std::string text, sf::Color color)
 {
     this->text.setString(text);
     this->text.setFillColor(color);
-
     textColor = color;
+
+    border.setSize(sf::Vector2f(this->text.getGlobalBounds().width * 1.1, this->text.getCharacterSize()));
 }
 
 void Button::setBorder(sf::Color color, int thickness)
@@ -84,7 +101,6 @@ void Button::setTexture(sf::Texture &texture)
 void Button::setOrigin(sf::Vector2f origin)
 {
     sprite.setOrigin(origin);
-    border.setOrigin(origin);
 }
 
 void Button::handleInput(sf::Event event)
@@ -164,13 +180,6 @@ void Button::render(sf::RenderWindow *window)
         sprite.setColor(sf::Color::White);
 
     window->draw(sprite);
-}
-
-void Button::setPosition(sf::Vector2f position)
-{
-    sprite.setPosition(position);
-    text.setPosition(position);
-    border.setPosition(position);
 }
 
 sf::FloatRect Button::getGlobalBounds()

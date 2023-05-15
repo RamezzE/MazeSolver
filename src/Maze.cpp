@@ -16,12 +16,11 @@ Maze::Maze(int row, int col, sf::Vector2f size, sf::Vector2f position)
 
     speedFactor = 1;
 
-    resize(row,col);
+    resizeGrid(row,col);
 }
 
 void Maze::init()
 {
-
     maze.resize(row);
     for (int i = 0; i < row; i++)
         maze[i].resize(col);
@@ -51,6 +50,18 @@ void Maze::init()
             footprints[i][j].setFillColor(sf::Color::Transparent);
             footprints[i][j].setSize(sf::Vector2f(player.getSize().x / 2, player.getSize().y / 2));
         }
+}
+
+void Maze::resize(sf::Vector2f size) {
+    mazeW = size.x;
+    mazeH = size.y;
+
+    for (int i = 0;i<row;i++)
+        for (int j = 0;j<col;j++)
+            maze[i][j].setSize(sf::Vector2f(mazeW / col, mazeH / row));
+    
+    mazeBorder.setSize(size);
+    setPosition(position);
 }
 
 void Maze::setPosition(sf::Vector2f position)
@@ -87,7 +98,7 @@ void Maze::setSpeedFactor(int factor)
     this->speedFactor = factor;
 }
 
-void Maze::resize(int row, int col) {
+void Maze::resizeGrid(int row, int col) {
     for (int i = 0;i<maze.size();i++) {
         maze[i].clear();
     }
