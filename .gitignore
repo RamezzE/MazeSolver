@@ -2,3 +2,4 @@
 .vscode
 SFML
 *.o
+src/fonts

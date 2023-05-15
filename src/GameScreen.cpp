@@ -1,6 +1,6 @@
 #include "GameScreen.hpp"
 
-int N = 10;
+int N = 50;
 
 GameScreen::GameScreen(Game *myGame)
 {
@@ -14,7 +14,11 @@ void GameScreen::init()
     sf::Vector2f pos(game->width * 0.05, game->height * 0.05);
 
     maze = new Maze(N, N, size, pos);
-    maze->setColors(sf::Color(12, 13, 23, 255), sf::Color(173, 172, 173), sf::Color(173, 172, 173));
+    maze->setColors(sf::Color(12, 13, 23, 255), sf::Color(173, 172, 173), sf::Color(21, 23, 44));
+
+    background.setPosition(0, 0);
+    background.setSize(sf::Vector2f(game->width, game->height));
+    background.setFillColor(sf::Color(107, 107, 107));
 
     font.loadFromFile(FONT_PATH);
 
@@ -31,10 +35,25 @@ void GameScreen::init()
 
         sf::FloatRect temp = myButtons[i].getGlobalBounds();
         myButtons[i].setOrigin(sf::Vector2f(temp.left + temp.width / 2, temp.top + temp.height / 2));
-        myButtons[i].setPosition(sf::Vector2f(game->width - myButtons[0].getGlobalBounds().width / 1.6, game->height * 3 / 4 + 100 * i));
+        myButtons[i].setPosition(sf::Vector2f((pos.x+size.x) + (game->width - (pos.x + size.x))/2, game->height * 2 / 4 + 100 * i));
         myButtons[i].setBorder(sf::Color(173, 172, 173), 0);
         myButtons[i].setBackgroundColor(sf::Color(12, 13, 23, 255));
     }
+
+    textBoxes.push_back(TextBox(font));
+
+    textBoxes[0].setString(std::to_string(N));
+    textBoxes[0].setTextLimit(2);
+    textBoxes[0].allowNumberOnly();
+    
+    textBoxes[0].setTextFormat(sf::Color::Magenta, 40);
+    textBoxes[0].setBackgroundColor(sf::Color(12, 13, 23, 255));
+    textBoxes[0].setBorder(3,sf::Color(12, 13, 23, 255),sf::Color(173, 172, 173), sf::Color::Magenta);
+
+    sf::FloatRect temp = textBoxes[0].getGlobalBounds();
+    textBoxes[0].setOrigin(sf::Vector2f(temp.left + temp.width/2, temp.top + temp.height/2));
+    textBoxes[0].setPosition(sf::Vector2f((pos.x+size.x) + (game->width - (pos.x + size.x))/2, game->height * 1 / 4));
+    textBoxes[0].setSize(sf::Vector2f(textBoxes[0].getCharacterSize()*1.2,textBoxes[0].getCharacterSize()));
 }
 
 void GameScreen::handleInput()
@@ -43,6 +62,9 @@ void GameScreen::handleInput()
 
     while (game->window->pollEvent(event))
     {
+        for (int i = 0;i<textBoxes.size();i++) 
+            textBoxes[i].handleInput(event);
+        
         // window closes if close button pressed
         if (event.type == sf::Event::Closed)
         {
@@ -71,6 +93,15 @@ void GameScreen::handleInput()
                 maze->setSpeedFactor(24);
                 break;
             }
+
+            if (event.key.code == sf::Keyboard::Enter) {
+
+                if (textBoxes[0].isSelected())
+                {
+                    N = stoi(textBoxes[0].getString());
+                    maze->resize(N,N);
+                }
+            }
         }
 
         if (event.type == sf::Event::MouseButtonPressed)
@@ -90,9 +121,10 @@ void GameScreen::update(const float dt)
 {
     maze->update(game->window);
     for (int i = 0; i < myButtons.size(); i++)
-    {
         myButtons[i].update(game->window);
-    }
+
+    for (int i = 0;i<textBoxes.size();i++)
+        textBoxes[i].update(game->window);
 
     if (myButtons[0].isDoAction())
     {
@@ -109,14 +141,15 @@ void GameScreen::update(const float dt)
 }
 
 void GameScreen::draw()
-{
-    background.setPosition(0, 0);
-    background.setSize(sf::Vector2f(game->width, game->height));
-    background.setFillColor(sf::Color::White);
-
+{ 
     game->window->draw(background);
-    maze->render(game->window);
 
     for (int i = 0; i < myButtons.size(); i++)
         myButtons[i].render(game->window);
+
+    for (int i = 0;i<textBoxes.size();i++)
+        textBoxes[i].draw(game->window);
+
+    maze->render(game->window);
+
 }

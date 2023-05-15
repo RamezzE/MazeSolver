@@ -11,6 +11,7 @@
 #include "Tile.hpp"
 #include "Maze.hpp"
 #include "Button.hpp"
+#include "TextBox.hpp"
 
 class GameScreen : public GameState
 {
@@ -29,6 +30,7 @@ private:
 	Maze* maze;
 
 	std::vector<Button> myButtons;
+	std::vector<TextBox> textBoxes;
 
 	sf::Font font;
 

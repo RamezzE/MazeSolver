@@ -5,13 +5,10 @@ Maze::Maze(int row, int col, sf::Vector2f size, sf::Vector2f position)
     srand(time(NULL));
     this->row = row;
     this->col = col;
+    this->position = position;
 
     mazeW = size.x;
     mazeH = size.y;
-
-    maze.resize(row);
-    for (int i = 0; i < row; i++)
-        maze[i].resize(col);
 
     sleepTime = 500000;
     steps = -1;
@@ -19,12 +16,15 @@ Maze::Maze(int row, int col, sf::Vector2f size, sf::Vector2f position)
 
     speedFactor = 1;
 
-    init();
-    setPosition(position);
+    resize(row,col);
 }
 
 void Maze::init()
 {
+
+    maze.resize(row);
+    for (int i = 0; i < row; i++)
+        maze[i].resize(col);
 
     for (int i = 0; i < row; i++)
         for (int j = 0; j < col; j++)
@@ -32,8 +32,7 @@ void Maze::init()
             maze[i][j] = Tile();
             maze[i][j].setSize(sf::Vector2f(mazeW / col, mazeH / row));
         }
-
-    mazeBorder.setOutlineColor(sf::Color(21, 23, 44));
+    
     mazeBorder.setOutlineThickness(10);
     mazeBorder.setSize(sf::Vector2f(mazeW, mazeH));
     mazeBorder.setFillColor(sf::Color::Transparent);
@@ -88,6 +87,20 @@ void Maze::setSpeedFactor(int factor)
     this->speedFactor = factor;
 }
 
+void Maze::resize(int row, int col) {
+    for (int i = 0;i<maze.size();i++) {
+        maze[i].clear();
+    }
+    maze.clear();
+
+    this->row = row;
+    this->col = col;
+
+    init();
+    setPosition(position);
+    clearMaze();
+}
+
 void Maze::handleInput(sf::Event event)
 {
     for (int i = 0; i < maze.size(); i++)
@@ -125,7 +138,7 @@ void Maze::clearMaze()
     for (int i = 0; i < row; i++)
         for (int j = 0; j < col; j++)
         {
-            maze[i][j].setColor(sf::Color::White, tileColor);
+            maze[i][j].resetColor();
             footprints[i][j].setFillColor(sf::Color::Transparent);
 
             maze[i][j].setWall(0, true);
