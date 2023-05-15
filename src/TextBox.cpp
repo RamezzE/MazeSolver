@@ -109,6 +109,7 @@ void TextBox::setOrigin(sf::Vector2f origin)
 void TextBox::setBorder(float thickness, sf::Color color, sf::Color hoverColor, sf::Color selectedColor)
 {
     border.setOutlineColor(color);
+    borderColor = color;
     borderHoverColor = hoverColor;
     borderSelectedColor = selectedColor;
     border.setOutlineThickness(thickness);

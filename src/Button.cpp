@@ -48,6 +48,8 @@ void Button::setText(std::string text, sf::Color color)
 {
     this->text.setString(text);
     this->text.setFillColor(color);
+
+    textColor = color;
 }
 
 void Button::setBorder(sf::Color color, int thickness)
@@ -137,9 +139,15 @@ void Button::update(sf::RenderWindow *window)
     }
 
     if (pressed)
-        border.setFillColor(pressedColor);
+    {
+        text.setFillColor(backgroundColor);
+        border.setFillColor(textColor);
+    }
     else
+    {
+        text.setFillColor(textColor);
         border.setFillColor(backgroundColor);
+    }
 }
 
 void Button::render(sf::RenderWindow *window)

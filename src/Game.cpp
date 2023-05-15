@@ -11,7 +11,7 @@ Game::Game() {
 	width = myWidth;
 	height = myHeight;
 	
-	window->create(sf::VideoMode(width, height), "Maze Solver", sf::Style::Titlebar | sf::Style::Close);
+	window->create(sf::VideoMode(width, height), "Maze Solver", sf::Style::Default | sf::Style::Close);
 	window->setFramerateLimit(60);
 }
 

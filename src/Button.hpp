@@ -50,5 +50,5 @@ private:
 
     bool mouseOver, pressed, doAction, noTexture;
 
-    sf::Color pressedColor, backgroundColor, borderColor;
+    sf::Color pressedColor, backgroundColor, borderColor, textColor;
 };

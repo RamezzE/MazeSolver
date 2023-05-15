@@ -25,6 +25,7 @@ public:
 private:
 	void init();
 	void solveMaze();
+
 	Game *game;
 
 	Maze* maze;
@@ -37,4 +38,7 @@ private:
 	std::vector<std::thread> myThreads;
 
 	sf::RectangleShape background;
+	sf::Texture bgImg;
+
+	bool resizeMaze;
 };
