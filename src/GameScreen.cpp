@@ -1,6 +1,6 @@
 #include "GameScreen.hpp"
 
-int N = 50;
+int N = 10;
 
 GameScreen::GameScreen(Game *myGame)
 {
@@ -139,12 +139,27 @@ void GameScreen::handleInput()
 
 void GameScreen::update(const float dt)
 {
-    maze->update(game->window);
+    for (int i = 0; i < textBoxes.size(); i++)
+        textBoxes[i].update(game->window);
+
     for (int i = 0; i < myButtons.size(); i++)
         myButtons[i].update(game->window);
 
-    for (int i = 0; i < textBoxes.size(); i++)
-        textBoxes[i].update(game->window);
+    maze->update(game->window);
+
+    if (maze->threadRunning)
+    {
+        for (int i = 0; i < myButtons.size(); i++)
+            myButtons[i].setEnabled(false);
+
+        resizeMaze = false;
+        return;
+    }
+    else
+    {
+        for (int i = 0; i < myButtons.size(); i++)
+            myButtons[i].setEnabled(true);
+    }
 
     if (myButtons[0].isDoAction() || resizeMaze)
     {

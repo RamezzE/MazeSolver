@@ -23,14 +23,18 @@ Button::Button(sf::Font &font)
 
 void Button::init()
 {
-    mouseOver = false;
-    pressed = false;
-    doAction = false;
+    mouseOver = pressed = doAction = false;
+    enabled = true;
     pressedColor = sf::Color(178, 178, 178);
 
     border.setFillColor(sf::Color::Transparent);
 
     text.setString("Button");
+}
+
+void Button::setEnabled(bool enabled)
+{
+    this->enabled = enabled;
 }
 
 void Button::setFont(sf::Font &font)
@@ -143,6 +147,9 @@ void Button::update(sf::RenderWindow *window)
             mouseOver = false;
     }
 
+    if (!enabled)
+        mouseOver = pressed = doAction = false;
+
     if (mouseOver)
     {
         border.setOutlineColor(sf::Color::Magenta);
@@ -158,11 +165,13 @@ void Button::update(sf::RenderWindow *window)
     {
         text.setFillColor(backgroundColor);
         border.setFillColor(textColor);
+        sprite.setColor(pressedColor);
     }
     else
     {
         text.setFillColor(textColor);
         border.setFillColor(backgroundColor);
+        sprite.setColor(sf::Color::White);
     }
 }
 
@@ -171,13 +180,14 @@ void Button::render(sf::RenderWindow *window)
     window->draw(border);
     window->draw(text);
 
+    if (!enabled) {
+        sf::RectangleShape disabledShade(border);
+        disabledShade.setFillColor(sf::Color(0, 0, 0, 150));
+        window->draw(disabledShade);
+    }
+
     if (noTexture)
         return;
-
-    if (pressed)
-        sprite.setColor(pressedColor);
-    else
-        sprite.setColor(sf::Color::White);
 
     window->draw(sprite);
 }

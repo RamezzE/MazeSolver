@@ -28,6 +28,8 @@ public:
     void update(sf::RenderWindow *window);
     void render(sf::RenderWindow* window);
 
+    bool threadRunning;
+
 private:
     int row, col, steps, minSteps;
 

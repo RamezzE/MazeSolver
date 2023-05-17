@@ -16,6 +16,8 @@ Maze::Maze(int row, int col, sf::Vector2f size, sf::Vector2f position)
 
     speedFactor = 1;
 
+    threadRunning = false;
+
     resizeGrid(row,col);
 }
 
@@ -121,6 +123,9 @@ void Maze::handleInput(sf::Event event)
 
 void Maze::update(sf::RenderWindow *window)
 {
+    if (threadRunning)
+        return;
+    
     for (int i = 0; i < maze.size(); i++)
         for (int j = 0; j < maze[i].size(); j++)
             maze[i][j].update(window);
@@ -165,6 +170,7 @@ void Maze::clearMaze()
 
 void Maze::generateMaze()
 {
+    threadRunning = true;
     clearMaze();
 
     visited.assign(row, std::vector<bool>(col, false));
@@ -179,6 +185,7 @@ void Maze::generateMaze()
     generateMaze_helper(i, j);
 
     std::cout << "Done Generating" << std::endl;
+    threadRunning = false;
 }
 
 void Maze::generateMaze_helper(int i, int j)
@@ -270,6 +277,7 @@ void Maze::neighboursUnvisited(std::vector<std::vector<int>> &vec, int i, int j)
 
 void Maze::solveMaze(int startX, int startY, int endX, int endY)
 {
+    threadRunning = true;
     steps = -1;
     minSteps = 999999;
     reachedEnd = false;
@@ -296,6 +304,7 @@ void Maze::solveMaze(int startX, int startY, int endX, int endY)
                 footprints[x][y].setFillColor(sf::Color::Transparent);
 
     std::cout << "Done" << std::endl;
+    threadRunning = false;
 }
 
 void Maze::solveMaze_helper(int i, int j, int endX, int endY) // i & j are startX and startY

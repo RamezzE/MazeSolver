@@ -20,6 +20,7 @@ public:
     void setScale(sf::Vector2f scale);
     void setPosition(sf::Vector2f position);
     void setPressedColor(sf::Color color);
+    void setEnabled(bool enabled);
 
     void setFont(sf::Font &font);
     void setBorder(sf::Color color, int thickness);
@@ -48,7 +49,7 @@ private:
     sf::Font font;
     sf::Text text;
 
-    bool mouseOver, pressed, doAction, noTexture;
+    bool mouseOver, pressed, doAction, noTexture, enabled;
 
     sf::Color pressedColor, backgroundColor, borderColor, textColor;
 };
