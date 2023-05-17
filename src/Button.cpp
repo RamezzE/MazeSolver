@@ -3,21 +3,12 @@
 #include <iostream>
 Button::Button()
 {
-    noTexture = true;
-    init();
-}
-
-Button::Button(sf::Texture &texture)
-{
-    sprite.setTexture(texture);
-    noTexture = false;
     init();
 }
 
 Button::Button(sf::Font &font)
 {
     this->font = font;
-    noTexture = true;
     init();
 }
 
@@ -53,7 +44,6 @@ void Button::setCharacterSize(int size)
 
 void Button::setPosition(sf::Vector2f position)
 {
-    sprite.setPosition(position);
     text.setPosition(position);
 
     sf::FloatRect temp = text.getLocalBounds();
@@ -91,22 +81,6 @@ void Button::setPressedColor(sf::Color color)
     pressedColor = color;
 }
 
-void Button::setScale(sf::Vector2f scale)
-{
-    sprite.setScale(scale);
-}
-
-void Button::setTexture(sf::Texture &texture)
-{
-    sprite.setTexture(texture);
-    noTexture = false;
-}
-
-void Button::setOrigin(sf::Vector2f origin)
-{
-    sprite.setOrigin(origin);
-}
-
 void Button::handleInput(sf::Event event)
 {
     if (event.type == sf::Event::MouseButtonPressed)
@@ -139,14 +113,6 @@ void Button::update(sf::RenderWindow *window)
     else
         mouseOver = false;
 
-    if (!noTexture)
-    {
-        if (isMouseOver(sprite, window))
-            mouseOver = true;
-        else
-            mouseOver = false;
-    }
-
     if (!enabled)
         mouseOver = pressed = doAction = false;
 
@@ -165,13 +131,11 @@ void Button::update(sf::RenderWindow *window)
     {
         text.setFillColor(backgroundColor);
         border.setFillColor(textColor);
-        sprite.setColor(pressedColor);
     }
     else
     {
         text.setFillColor(textColor);
         border.setFillColor(backgroundColor);
-        sprite.setColor(sf::Color::White);
     }
 }
 
@@ -185,27 +149,16 @@ void Button::render(sf::RenderWindow *window)
         disabledShade.setFillColor(sf::Color(0, 0, 0, 150));
         window->draw(disabledShade);
     }
-
-    if (noTexture)
-        return;
-
-    window->draw(sprite);
 }
 
 sf::FloatRect Button::getGlobalBounds()
 {
-    if (noTexture)
-        return border.getGlobalBounds();
-
-    return sprite.getGlobalBounds();
+    return border.getGlobalBounds();
 }
 
 sf::FloatRect Button::getLocalBounds()
 {
-    if (noTexture)
-        return border.getGlobalBounds();
-
-    return sprite.getLocalBounds();
+    return border.getLocalBounds();
 }
 
 bool Button::isDoAction()
@@ -224,11 +177,6 @@ bool Button::isMouseOver()
 }
 
 bool Button::isMouseOver(sf::RectangleShape sprite, sf::RenderWindow *window)
-{
-    return sprite.getGlobalBounds().contains(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y);
-}
-
-bool Button::isMouseOver(sf::Sprite sprite, sf::RenderWindow *window)
 {
     return sprite.getGlobalBounds().contains(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y);
 }

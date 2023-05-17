@@ -6,6 +6,8 @@ GameScreen::GameScreen(Game *myGame)
 {
     this->game = myGame;
 
+    speedSlider.create(0, 5);
+
     font.loadFromFile(FONT_PATH);
 
     for (int i = 0; i < 3; i++)
@@ -64,6 +66,8 @@ void GameScreen::init()
     }
 
     textBoxes[0].setPosition(sf::Vector2f(textBoxes[0].getGlobalBounds().width / 4 + (pos.x + size.x) + (game->width - (pos.x + size.x)) / 2, game->height * 4 / 8));
+    
+    speedSlider.setPosition(sf::Vector2f(textBoxes[0].getGlobalBounds().width / 4 + (pos.x + size.x) + (game->width - (pos.x + size.x)) / 2 -speedSlider.getGlobalBounds().width/2, game->height * 3 / 8));
 }
 void GameScreen::handleInput()
 {
@@ -73,6 +77,8 @@ void GameScreen::handleInput()
     {
         for (int i = 0; i < textBoxes.size(); i++)
             textBoxes[i].handleInput(event);
+
+        speedSlider.handleInput(event);
 
         if (event.type == sf::Event::Resized)
         {
@@ -103,24 +109,6 @@ void GameScreen::handleInput()
                 }
             }
 
-            switch (event.key.code)
-            {
-            case sf::Keyboard::Num1:
-                maze->setSpeedFactor(0);
-                break;
-            case sf::Keyboard::Num2:
-                maze->setSpeedFactor(1);
-                break;
-            case sf::Keyboard::Num3:
-                maze->setSpeedFactor(4);
-                break;
-            case sf::Keyboard::Num4:
-                maze->setSpeedFactor(8);
-                break;
-            case sf::Keyboard::Num5:
-                maze->setSpeedFactor(24);
-                break;
-            }
         }
 
         if (event.type == sf::Event::MouseButtonPressed)
@@ -139,11 +127,35 @@ void GameScreen::handleInput()
 
 void GameScreen::update(const float dt)
 {
+
+    switch ((int)speedSlider.getSliderValue())
+            {
+            case 0:
+                maze->setSpeedFactor(1);
+                break;
+            case 1:
+                maze->setSpeedFactor(4);
+                break;
+            case 2:
+                maze->setSpeedFactor(8);
+            case 3: 
+                maze->setSpeedFactor(16);
+                break;
+            case 4:
+                maze->setSpeedFactor(32);
+                break;
+            case 5:
+                maze->setSpeedFactor(0);
+                break;
+            }
+    
     for (int i = 0; i < textBoxes.size(); i++)
         textBoxes[i].update(game->window);
 
     for (int i = 0; i < myButtons.size(); i++)
         myButtons[i].update(game->window);
+
+    speedSlider.update(game->window);
 
     maze->update(game->window);
 
@@ -180,6 +192,8 @@ void GameScreen::update(const float dt)
         myThreads.back().detach();
         myButtons[2].didAction();
     }
+
+    
 }
 
 void GameScreen::draw()
@@ -193,4 +207,6 @@ void GameScreen::draw()
         textBoxes[i].draw(game->window);
 
     maze->render(game->window);
+
+    speedSlider.render(*(game->window));
 }

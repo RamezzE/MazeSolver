@@ -12,6 +12,7 @@
 #include "Maze.hpp"
 #include "Button.hpp"
 #include "TextBox.hpp"
+#include "Slider.hpp"
 
 class GameScreen : public GameState
 {
@@ -41,4 +42,6 @@ private:
 	sf::Texture bgImg;
 
 	bool resizeMaze;
+
+	Slider speedSlider;
 };

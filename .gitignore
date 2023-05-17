@@ -3,3 +3,4 @@
 SFML
 *.o
 src/fonts
+src/imgs
