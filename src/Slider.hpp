@@ -16,6 +16,7 @@ public:
     void setPosition(sf::Vector2f position);
     void setAxisSize(sf::Vector2f size);
     void setHandleSize(sf::Vector2f size);
+    void setColors(sf::Color axisColor, sf::Color handleColor);
 
     sf::Text returnText(int x, int y, std::string z, int fontSize);
     void create(int min, int max);

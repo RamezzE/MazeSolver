@@ -13,7 +13,7 @@ public:
     void setWall(int index, bool value);
     void setVisited(bool value);
     void setColor(sf::Color tileColor, sf::Color wallColor);
-
+    
     void resetColor();
 
     bool getWall(int index);
@@ -38,7 +38,7 @@ private:
     bool wall[2]; // top, , right
 
     bool visited;
-    bool current;
+    bool destination;
     bool mouseOver;
 
     sf::Color color;

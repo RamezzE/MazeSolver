@@ -9,7 +9,7 @@ Slider::Slider()
     setAxisSize(axisSize);
     setHandleSize(handleSize);
     setPosition(position);
-    
+
     mouseOver = pressed = false;
 
     axis.setFillColor(sf::Color(63, 63, 63));
@@ -44,6 +44,12 @@ void Slider::setHandleSize(sf::Vector2f size)
     handle.setSize(handleSize);
     sf::FloatRect temp = handle.getLocalBounds();
     handle.setOrigin(temp.left + temp.width / 2, temp.top + temp.height / 2);
+}
+
+void Slider::setColors(sf::Color axisColor, sf::Color handleColor)
+{
+    axis.setFillColor(axisColor);
+    handle.setFillColor(handleColor);
 }
 
 sf::Text Slider::returnText(int x, int y, std::string z, int fontSize)
@@ -136,6 +142,13 @@ void Slider::render(sf::RenderWindow &window)
     // window.draw(returnText(position.x - 10, position.y + 5, std::to_string(minValue), 20));
     window.draw(axis);
     // window.draw(returnText(position.x + axisSize.x - 10, position.y + 5, std::to_string(maxValue), 20));
+    sf::RectangleShape progress;
+    progress.setOrigin(axis.getOrigin());
+    progress.setPosition(axis.getPosition());
+    progress.setSize(sf::Vector2f(handle.getGlobalBounds().left - axis.getGlobalBounds().left, axis.getSize().y));
+    progress.setFillColor(handle.getFillColor());
+    
+    window.draw(progress);
     window.draw(handle);
     window.draw(returnText(handle.getPosition().x - handleSize.x, handle.getPosition().y - handleSize.y,
                            std::to_string((int)sliderValue), 15));

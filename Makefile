@@ -11,15 +11,15 @@ DEFINITON_FILE := $(wildcard $(SRC_DIR)/Definitions.hpp)
 
 CC = g++
 
-CFLAGS       := -std=c++14 -g -gdwarf-2 -fno-omit-frame-pointer
-# CFLAGS       := -std=c++14
+# CFLAGS       := -std=c++14 -g -gdwarf-2 -fno-omit-frame-pointer
+CFLAGS       := -std=c++14 
 
 CPPFLAGS  := -I"SFML\include" -DSFML_STATIC
 
-LDFLAGS := -L"SFML\lib"
+LDFLAGS := -L"SFML\lib" -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic
 
-LDLIBS := -lsfml-graphics-s-d -lsfml-window-s-d -lsfml-system-s-d -lopengl32 -lwinmm -lgdi32 -lsfml-main-d -lfreetype
-# LDLIBS := -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lopengl32 -lwinmm -lgdi32 -lsfml-main -lfreetype
+# LDLIBS := -lsfml-graphics-s-d -lsfml-window-s-d -lsfml-system-s-d -lopengl32 -lwinmm -lgdi32 -lsfml-main-d -lfreetype
+LDLIBS := -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lopengl32 -lwinmm -lgdi32 -lsfml-main -lfreetype
 
 TARGET := "myApp.exe"
 

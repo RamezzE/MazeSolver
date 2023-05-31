@@ -1,6 +1,6 @@
 #include "GameScreen.hpp"
 
-int N = 10;
+int N = 20;
 
 GameScreen::GameScreen(Game *myGame)
 {
@@ -10,7 +10,7 @@ GameScreen::GameScreen(Game *myGame)
 
     font.loadFromFile(FONT_PATH);
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 4; i++)
     {
         myButtons.push_back(Button());
         myButtons[i].setFont(font);
@@ -41,10 +41,18 @@ GameScreen::GameScreen(Game *myGame)
     myButtons[0].setText("Resize Maze", sf::Color::Magenta);
     myButtons[1].setText("Generate Maze", sf::Color::Magenta);
     myButtons[2].setText("Solve Maze", sf::Color::Magenta);
+    myButtons[3].setText("Choose Start/End", sf::Color::Magenta);
 
     sf::FloatRect temp = textBoxes[0].getGlobalBounds();
     textBoxes[0].setOrigin(sf::Vector2f(temp.left + temp.width / 2, temp.top + temp.height / 2));
     textBoxes[0].setSize(sf::Vector2f(textBoxes[0].getCharacterSize() * 1.2, textBoxes[0].getCharacterSize()));
+
+    speedSlider.setColors(sf::Color(21, 23, 44), sf::Color::Magenta);
+    
+    speedLabel.setString("Speed: ");
+    speedLabel.setFont(font);
+    speedLabel.setCharacterSize(40);
+    speedLabel.setFillColor(sf::Color::Magenta);
 
     init();
 }
@@ -59,15 +67,19 @@ void GameScreen::init()
     background.setPosition(0, 0);
     background.setSize(sf::Vector2f(game->width, game->height));
 
-    for (int i = 1; i <= myButtons.size(); i++)
+    for (int i = 1; i <= 3; i++)
     {
         sf::FloatRect temp = myButtons[i - 1].getGlobalBounds();
         myButtons[i - 1].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 2, game->height * 4 / 8 + 2 * myButtons[0].getLocalBounds().height * i));
     }
 
+    myButtons[3].setPosition(sf::Vector2f(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 2, game->height * 3/8)));
+
     textBoxes[0].setPosition(sf::Vector2f(textBoxes[0].getGlobalBounds().width / 4 + (pos.x + size.x) + (game->width - (pos.x + size.x)) / 2, game->height * 4 / 8));
-    
-    speedSlider.setPosition(sf::Vector2f(textBoxes[0].getGlobalBounds().width / 4 + (pos.x + size.x) + (game->width - (pos.x + size.x)) / 2 -speedSlider.getGlobalBounds().width/2, game->height * 3 / 8));
+
+    speedSlider.setPosition(sf::Vector2f(textBoxes[0].getGlobalBounds().width / 4 + (pos.x + size.x) + (game->width - (pos.x + size.x)) / 2 - speedSlider.getGlobalBounds().width / 2, game->height * 2 / 8));
+
+    speedLabel.setPosition(sf::Vector2f(speedSlider.getGlobalBounds().left, game->height * 1 / 8 ));
 }
 void GameScreen::handleInput()
 {
@@ -108,7 +120,6 @@ void GameScreen::handleInput()
                     return;
                 }
             }
-
         }
 
         if (event.type == sf::Event::MouseButtonPressed)
@@ -129,26 +140,26 @@ void GameScreen::update(const float dt)
 {
 
     switch ((int)speedSlider.getSliderValue())
-            {
-            case 0:
-                maze->setSpeedFactor(1);
-                break;
-            case 1:
-                maze->setSpeedFactor(4);
-                break;
-            case 2:
-                maze->setSpeedFactor(8);
-            case 3: 
-                maze->setSpeedFactor(16);
-                break;
-            case 4:
-                maze->setSpeedFactor(32);
-                break;
-            case 5:
-                maze->setSpeedFactor(0);
-                break;
-            }
-    
+    {
+    case 0:
+        maze->setSpeedFactor(1);
+        break;
+    case 1:
+        maze->setSpeedFactor(4);
+        break;
+    case 2:
+        maze->setSpeedFactor(8);
+    case 3:
+        maze->setSpeedFactor(16);
+        break;
+    case 4:
+        maze->setSpeedFactor(32);
+        break;
+    case 5:
+        maze->setSpeedFactor(0);
+        break;
+    }
+
     for (int i = 0; i < textBoxes.size(); i++)
         textBoxes[i].update(game->window);
 
@@ -159,7 +170,7 @@ void GameScreen::update(const float dt)
 
     maze->update(game->window);
 
-    if (maze->threadRunning)
+    if (maze->threadRunning || maze->choosingStartOrEnd)
     {
         for (int i = 0; i < myButtons.size(); i++)
             myButtons[i].setEnabled(false);
@@ -171,6 +182,11 @@ void GameScreen::update(const float dt)
     {
         for (int i = 0; i < myButtons.size(); i++)
             myButtons[i].setEnabled(true);
+
+        if (!maze->mazeGenerated) {
+            myButtons[2].setEnabled(false);
+            myButtons[3].setEnabled(false);
+        }
     }
 
     if (myButtons[0].isDoAction() || resizeMaze)
@@ -188,12 +204,15 @@ void GameScreen::update(const float dt)
     }
     else if (myButtons[2].isDoAction())
     {
-        myThreads.push_back(std::thread{&Maze::solveMaze, std::ref(maze), 0, 0, N - 1, N - 1});
+        myThreads.push_back(std::thread{&Maze::solveMaze, std::ref(maze)});
         myThreads.back().detach();
         myButtons[2].didAction();
     }
-
-    
+    else if (myButtons[3].isDoAction())
+    {
+        maze->choosingStartOrEnd = true;
+        myButtons[3].didAction();
+    }
 }
 
 void GameScreen::draw()
@@ -209,4 +228,5 @@ void GameScreen::draw()
     maze->render(game->window);
 
     speedSlider.render(*(game->window));
+    game->window->draw(speedLabel);
 }

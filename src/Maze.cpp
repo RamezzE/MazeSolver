@@ -16,9 +16,18 @@ Maze::Maze(int row, int col, sf::Vector2f size, sf::Vector2f position)
 
     speedFactor = 1;
 
-    threadRunning = false;
+    threadRunning = choosingStartOrEnd = mazeGenerated = false;
 
-    resizeGrid(row,col);
+    startX = startY = 0;
+
+    endX = row - 1;
+    endY = col - 1;
+
+    mouseClickCounter = 0;
+
+    resizeGrid(row, col);
+
+    footprints[endX][endY].setFillColor(sf::Color::White);
 }
 
 void Maze::init()
@@ -33,7 +42,7 @@ void Maze::init()
             maze[i][j] = Tile();
             maze[i][j].setSize(sf::Vector2f(mazeW / col, mazeH / row));
         }
-    
+
     mazeBorder.setOutlineThickness(10);
     mazeBorder.setSize(sf::Vector2f(mazeW, mazeH));
     mazeBorder.setFillColor(sf::Color::Transparent);
@@ -54,14 +63,15 @@ void Maze::init()
         }
 }
 
-void Maze::resize(sf::Vector2f size) {
+void Maze::resize(sf::Vector2f size)
+{
     mazeW = size.x;
     mazeH = size.y;
 
-    for (int i = 0;i<row;i++)
-        for (int j = 0;j<col;j++)
+    for (int i = 0; i < row; i++)
+        for (int j = 0; j < col; j++)
             maze[i][j].setSize(sf::Vector2f(mazeW / col, mazeH / row));
-    
+
     mazeBorder.setSize(size);
     setPosition(position);
 }
@@ -100,14 +110,21 @@ void Maze::setSpeedFactor(int factor)
     this->speedFactor = factor;
 }
 
-void Maze::resizeGrid(int row, int col) {
-    for (int i = 0;i<maze.size();i++) {
+void Maze::resizeGrid(int row, int col)
+{
+    for (int i = 0; i < maze.size(); i++)
+    {
         maze[i].clear();
     }
     maze.clear();
 
     this->row = row;
     this->col = col;
+
+    startX = startY = 0;
+
+    endX = row - 1;
+    endY = col - 1;
 
     init();
     setPosition(position);
@@ -116,6 +133,15 @@ void Maze::resizeGrid(int row, int col) {
 
 void Maze::handleInput(sf::Event event)
 {
+    if (event.type == sf::Event::MouseButtonPressed)
+    {
+        if (event.mouseButton.button == sf::Mouse::Left)
+        {
+            if (choosingStartOrEnd)
+                mouseClicked = true;
+        }
+    }
+
     for (int i = 0; i < maze.size(); i++)
         for (int j = 0; j < maze[i].size(); j++)
             maze[i][j].handleInput(event);
@@ -123,9 +149,54 @@ void Maze::handleInput(sf::Event event)
 
 void Maze::update(sf::RenderWindow *window)
 {
+    if (choosingStartOrEnd)
+    {
+        if (!mouseClicked)
+            return;
+
+        mouseClicked = false;
+
+        if (mouseClickCounter == 0)
+        {
+            for (int i = 0; i < maze.size(); i++)
+            {
+                for (int j = 0; j < maze[i].size(); j++)
+                {
+                    if (isMouseOver(maze[i][j], window))
+                    {
+                        player.setPosition(maze[i][j].getGlobalBounds().left + maze[i][j].getGlobalBounds().width / 4, maze[i][j].getGlobalBounds().top + maze[i][j].getGlobalBounds().height / 4);
+                        startX = i;
+                        startY = j;
+                        mouseClickCounter++;
+                        return;
+                    }
+                }
+            }
+            return;
+        }
+
+        for (int i = 0; i < maze.size(); i++)
+        {
+            for (int j = 0; j < maze[i].size(); j++)
+            {
+                if (isMouseOver(maze[i][j], window))
+                {
+                    footprints[endX][endY].setFillColor(sf::Color::Transparent);
+                    endX = i;
+                    endY = j;
+                    footprints[endX][endY].setFillColor(sf::Color::White);
+                    choosingStartOrEnd = false;
+                    mouseClickCounter = 0;
+                    return;
+                }
+            }
+        }
+        return;
+    }
+
     if (threadRunning)
         return;
-    
+
     for (int i = 0; i < maze.size(); i++)
         for (int j = 0; j < maze[i].size(); j++)
             maze[i][j].update(window);
@@ -166,6 +237,8 @@ void Maze::clearMaze()
             if (j == col - 1)
                 maze[i][j].setWall(1, false);
         }
+
+    mazeGenerated = false;
 }
 
 void Maze::generateMaze()
@@ -186,6 +259,10 @@ void Maze::generateMaze()
 
     std::cout << "Done Generating" << std::endl;
     threadRunning = false;
+    mazeGenerated = true;
+    i = startX, j = startY;
+    player.setPosition(maze[i][j].getGlobalBounds().left + maze[i][j].getGlobalBounds().width / 4, maze[i][j].getGlobalBounds().top + maze[i][j].getGlobalBounds().height / 4);
+    footprints[endX][endY].setFillColor(sf::Color::White);
 }
 
 void Maze::generateMaze_helper(int i, int j)
@@ -275,7 +352,7 @@ void Maze::neighboursUnvisited(std::vector<std::vector<int>> &vec, int i, int j)
         }
 }
 
-void Maze::solveMaze(int startX, int startY, int endX, int endY)
+void Maze::solveMaze()
 {
     threadRunning = true;
     steps = -1;
@@ -288,7 +365,14 @@ void Maze::solveMaze(int startX, int startY, int endX, int endY)
 
     for (int i = 0; i < row; i++)
         for (int j = 0; j < col; j++)
+        {
+            if (i == endX && j == endY)
+            {
+                footprints[i][j].setFillColor(sf::Color::White);
+                continue;
+            }
             footprints[i][j].setFillColor(sf::Color::Transparent);
+        }
 
     steps = -1;
     minSteps = 999999;
@@ -310,7 +394,7 @@ void Maze::solveMaze(int startX, int startY, int endX, int endY)
 void Maze::solveMaze_helper(int i, int j, int endX, int endY) // i & j are startX and startY
 {
     showPlayer(i, j);
-    backTrackCheck(false,i,j);
+    backTrackCheck(false, i, j);
 
     if (reachedEnd)
         return;
@@ -326,7 +410,7 @@ void Maze::solveMaze_helper(int i, int j, int endX, int endY) // i & j are start
         }
         reachedEnd = true;
         showPlayer(i, j);
-        backTrackCheck(true,i,j);
+        backTrackCheck(true, i, j);
         return;
     }
 
@@ -388,7 +472,7 @@ void Maze::backTrackCheck(bool backTrack, int i, int j)
     {
         steps--;
         if (reachedEnd)
-            footprints[i][j].setFillColor(sf::Color(0, 255, 0));
+            footprints[i][j].setFillColor(sf::Color::Green);
         else
             footprints[i][j].setFillColor(sf::Color(23, 28, 116));
     }
@@ -397,4 +481,9 @@ void Maze::backTrackCheck(bool backTrack, int i, int j)
         steps++;
         footprints[i][j].setFillColor(player.getFillColor());
     }
+}
+
+bool Maze::isMouseOver(Tile tile, sf::RenderWindow *window)
+{
+    return tile.getGlobalBounds().contains(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y);
 }

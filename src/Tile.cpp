@@ -13,6 +13,8 @@ Tile::Tile()
     wall[1] = true;
 
     color = sf::Color(224, 223, 224);
+
+    destination = false;
 }
 
 void Tile::setPosition(sf::Vector2f position)
@@ -43,12 +45,12 @@ void Tile::setVisited(bool value)
     visited = value;
 }
 
-void Tile::setColor(sf::Color tileColor, sf::Color wallColor) {
+void Tile::setColor(sf::Color tileColor, sf::Color wallColor)
+{
     tile.setFillColor(tileColor);
 
-    for (int i = 0;i<2;i++)
+    for (int i = 0; i < 2; i++)
         line[i].setFillColor(wallColor);
-
 }
 
 void Tile::resetColor()
@@ -66,7 +68,8 @@ sf::Vector2f Tile::getPosition()
     return tile.getPosition();
 }
 
-sf::FloatRect Tile::getGlobalBounds() {
+sf::FloatRect Tile::getGlobalBounds()
+{
     return tile.getGlobalBounds();
 }
 
@@ -77,8 +80,10 @@ bool Tile::isVisited()
 
 void Tile::handleInput(sf::Event event)
 {
-    if (event.type == sf::Event::MouseButtonPressed) {
-        if (event.mouseButton.button == sf::Mouse::Left) {
+    if (event.type == sf::Event::MouseButtonPressed)
+    {
+        if (event.mouseButton.button == sf::Mouse::Left)
+        {
             if (mouseOver)
                 wall[0] = !wall[0];
         }

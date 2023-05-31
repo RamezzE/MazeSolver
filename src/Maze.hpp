@@ -16,7 +16,7 @@ public:
     void resize(sf::Vector2f size);
 
     void generateMaze();
-    void solveMaze(int startX, int startY, int endX, int endY);
+    void solveMaze();
 
     void resizeGrid(int row, int col);
 
@@ -27,8 +27,10 @@ public:
     void handleInput(sf::Event event);
     void update(sf::RenderWindow *window);
     void render(sf::RenderWindow* window);
+    
+    bool threadRunning, choosingStartOrEnd, mazeGenerated;
 
-    bool threadRunning;
+    int startX, startY, endX, endY;
 
 private:
     int row, col, steps, minSteps;
@@ -36,9 +38,9 @@ private:
     float mazeW, mazeH;
 
     float sleepTime;
-    int speedFactor;
+    int speedFactor, mouseClickCounter;
 
-    bool reachedEnd;
+    bool reachedEnd, mouseClicked;
 
     std::vector<std::vector<Tile>> maze;
     std::vector<std::vector<sf::RectangleShape>> footprints;
@@ -50,7 +52,7 @@ private:
     sf::RectangleShape mazeBorder;
     sf::RectangleShape player;
 
-    sf::Color borderColor, tileColor, wallColor;
+    sf::Color borderColor, tileColor, wallColor, footPrintColor;
 
     sf::Vector2f position;
     
@@ -62,5 +64,7 @@ private:
     void showPlayer(int i, int j);
     void backTrackCheck(bool backTrack, int i, int j);
     void neighboursUnvisited(std::vector<std::vector<int>> &vec, int i, int j);
+
+    bool isMouseOver(Tile tile, sf::RenderWindow *window);
 
 };

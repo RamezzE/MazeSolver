@@ -44,4 +44,5 @@ private:
 	bool resizeMaze;
 
 	Slider speedSlider;
+	sf::Text speedLabel;
 };
