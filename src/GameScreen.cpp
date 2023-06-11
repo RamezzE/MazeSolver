@@ -33,9 +33,11 @@ GameScreen::GameScreen(Game *myGame)
     background.setTexture(&bgImg);
 
     sf::Vector2f size(game->height / 1.2, game->height / 1.2);
-    sf::Vector2f pos(game->width * 0.05, game->height * 0.05);
+    sf::Vector2f pos(game->width * 0.025, game->height * 0.025);
     maze = new Maze(N, N, size, pos);
     maze->setColors(sf::Color(12, 13, 23, 255), sf::Color(21, 23, 44), sf::Color(21, 23, 44));
+
+    game->window->setPosition(sf::Vector2i(0, 0));
 
     myButtons[0].setText("Resize Maze", sf::Color::Magenta);
     myButtons[1].setText("Generate Maze", sf::Color::Magenta);
