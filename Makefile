@@ -11,8 +11,8 @@ DEFINITON_FILE := $(wildcard $(SRC_DIR)/Definitions.hpp)
 
 CC = g++
 
-# CFLAGS       := -std=c++14 -g -gdwarf-2 -fno-omit-frame-pointer
-CFLAGS       := -std=c++14 
+# CFLAGS       := -std=c++17 -g -gdwarf-2 -fno-omit-frame-pointer
+CFLAGS       := -std=c++17
 
 CPPFLAGS  := -I"SFML\include" -DSFML_STATIC
 

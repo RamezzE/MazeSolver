@@ -27,6 +27,7 @@ public:
     void handleInput(sf::Event event);
     void update(sf::RenderWindow *window);
     void render(sf::RenderWindow* window);
+    void render(sf::RenderTexture* window);
     
     bool threadRunning, choosingStartOrEnd, mazeGenerated;
 

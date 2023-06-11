@@ -34,7 +34,6 @@ GameScreen::GameScreen(Game *myGame)
 
     sf::Vector2f size(game->height / 1.2, game->height / 1.2);
     sf::Vector2f pos(game->width * 0.05, game->height * 0.05);
-
     maze = new Maze(N, N, size, pos);
     maze->setColors(sf::Color(12, 13, 23, 255), sf::Color(21, 23, 44), sf::Color(21, 23, 44));
 
@@ -50,12 +49,14 @@ GameScreen::GameScreen(Game *myGame)
     speedLabel.setFont(font);
     speedLabel.setFillColor(sf::Color::Magenta);
 
+    exportMaze = false;
+
     init();
 }
 
 void GameScreen::init()
 {
-    sf::Vector2f size(game->height / 1.1, game->height / 1.1);
+    sf::Vector2f size(game->height / 1.2, game->height / 1.2);
     sf::Vector2f pos(game->width * 0.05, game->height * 0.05);
 
     maze->resize(size);
@@ -101,49 +102,7 @@ void GameScreen::handleInput()
 
         if (event.type == sf::Event::Resized)
         {
-            sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
-
-            int h = 0, w = 0;
-
-            if (sf::VideoMode::getDesktopMode().width == event.size.width || sf::VideoMode::getDesktopMode().height == event.size.height)
-            {
-                h = sf::VideoMode::getDesktopMode().height;
-                w = sf::VideoMode::getDesktopMode().width;
-            }
-            else if (event.size.height != game->height)
-            {
-                while (h <= event.size.height)
-                    h += 9;
-
-                h -= 9;
-                w = h * 16 / 9;
-                game->window->setSize(sf::Vector2u(w, h));
-            }
-            else if (event.size.width != game->width)
-            {
-                while (w <= event.size.width)
-                    w += 16;
-
-                w -= 16;
-                h = w * 9 / 16;
-                game->window->setSize(sf::Vector2u(w, h));
-            }
-            else if (event.size.height == game->height && event.size.width == game->width)
-                return;
-
-            visibleArea = sf::FloatRect(0, 0, w, h);
-
-            if (event.size.height == sf::VideoMode::getDesktopMode().height || event.size.width == sf::VideoMode::getDesktopMode().width) {
-                game->window->setPosition(sf::Vector2i(0, 0));
-                game->window->setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
-            }
-            else
-                game->window->setView(sf::View(visibleArea));
-
-            game->width = game->window->getSize().x;
-            game->height = game->window->getSize().y;
-
-            init();
+            checkResize(event);
             break;
         }
         // window closes if close button pressed
@@ -230,6 +189,7 @@ void GameScreen::update(const float dt)
         for (int i = 0; i < myButtons.size(); i++)
             myButtons[i].setEnabled(false);
 
+        myButtons[4].setEnabled(true);
         resizeMaze = false;
         return;
     }
@@ -269,6 +229,11 @@ void GameScreen::update(const float dt)
         maze->choosingStartOrEnd = true;
         myButtons[3].didAction();
     }
+    else if (myButtons[4].isDoAction())
+    {
+        exportMazeToPNG();
+        myButtons[4].didAction();
+    }
 }
 
 void GameScreen::draw()
@@ -285,4 +250,94 @@ void GameScreen::draw()
 
     speedSlider.render(*(game->window));
     game->window->draw(speedLabel);
+}
+
+void GameScreen::exportMazeToPNG()
+{
+    Maze tempMaze = *maze;
+
+    tempMaze.setColors(sf::Color::White, sf::Color::Black, sf::Color::Black);
+    tempMaze.resize(sf::Vector2f(2000, 2000));
+    tempMaze.setPosition(sf::Vector2f(0, 0));
+
+    sf::RenderTexture texture;
+    texture.create(2000, 2000);
+    texture.clear(sf::Color::White);
+
+    tempMaze.render(&texture);
+    texture.display();
+
+    sf::Image image = texture.getTexture().copyToImage();
+    // get date now
+    time_t now = time(0);
+
+    // create directory if it doesnt exist
+    std::string dir = "Exported Maze Images/";
+    if (!fs::exists(dir))
+        fs::create_directory(dir);
+
+    // save file with current time
+    dir += ctime(&now);
+    char characterToRemove = ':';
+
+    std::string result;
+    for (char c : dir)
+        if (c != characterToRemove && c != '\n')
+            result += c;
+    dir = result;
+
+    // save image
+    image.saveToFile(dir + ".png");
+
+    // open image
+    std::string cmd = "\"" + dir + ".png\"";
+    system(cmd.c_str());
+}
+
+void GameScreen::checkResize(sf::Event event)
+{
+    sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+
+    int h = 0, w = 0;
+
+    if (sf::VideoMode::getDesktopMode().width == event.size.width || sf::VideoMode::getDesktopMode().height == event.size.height)
+    {
+        h = sf::VideoMode::getDesktopMode().height;
+        w = sf::VideoMode::getDesktopMode().width;
+    }
+    else if (event.size.height != game->height)
+    {
+        while (h <= event.size.height)
+            h += 9;
+
+        h -= 9;
+        w = h * 16 / 9;
+        game->window->setSize(sf::Vector2u(w, h));
+    }
+    else if (event.size.width != game->width)
+    {
+        while (w <= event.size.width)
+            w += 16;
+
+        w -= 16;
+        h = w * 9 / 16;
+        game->window->setSize(sf::Vector2u(w, h));
+    }
+    else if (event.size.height == game->height && event.size.width == game->width)
+        return;
+
+    visibleArea = sf::FloatRect(0, 0, w, h);
+
+    if (event.size.height == sf::VideoMode::getDesktopMode().height || event.size.width == sf::VideoMode::getDesktopMode().width)
+    {
+        game->window->setPosition(sf::Vector2i(0, 0));
+        game->window->setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
+    }
+    else
+        game->window->setView(sf::View(visibleArea));
+
+    game->width = game->window->getSize().x;
+    game->height = game->window->getSize().y;
+
+    init();
 }

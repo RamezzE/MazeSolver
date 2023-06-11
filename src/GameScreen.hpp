@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <thread>
+#include <filesystem>
 
 #include "Definitions.hpp"
 #include "Game.hpp"
@@ -14,6 +15,8 @@
 #include "TextBox.hpp"
 #include "Slider.hpp"
 
+namespace fs = std::filesystem;
+
 class GameScreen : public GameState
 {
 public:
@@ -22,6 +25,9 @@ public:
 	void handleInput();
 	void update(const float dt);
 	void draw();
+
+	void checkResize(sf::Event event);
+	void exportMazeToPNG();
 
 private:
 	void init();
@@ -41,7 +47,7 @@ private:
 	sf::RectangleShape background;
 	sf::Texture bgImg;
 
-	bool resizeMaze;
+	bool resizeMaze, exportMaze;
 
 	Slider speedSlider;
 	sf::Text speedLabel;

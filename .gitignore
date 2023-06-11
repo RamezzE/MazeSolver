@@ -4,3 +4,4 @@ SFML
 *.o
 src/fonts
 src/imgs
+Exported Maze Images

@@ -29,8 +29,10 @@ public:
     void update(sf::RenderWindow *window);
 
     void renderTiles(sf::RenderWindow *window);
+    void renderTiles(sf::RenderTexture *window);
 
     void renderLines(sf::RenderWindow *window);
+    void renderLines(sf::RenderTexture *window);
 
 private:
     sf::RectangleShape tile;

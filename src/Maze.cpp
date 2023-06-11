@@ -109,6 +109,13 @@ void Maze::setColors(sf::Color tileColor, sf::Color wallColor, sf::Color outline
     this->wallColor = wallColor;
 
     mazeBorder.setOutlineColor(outlineColor);
+
+    if (!mazeGenerated)
+        return;
+    
+    for (int i = 0; i < maze.size(); i++)
+        for (int j = 0; j < maze[i].size(); j++)
+            maze[i][j].setColor(tileColor, wallColor);
 }
 
 void Maze::setSpeedFactor(int factor)
@@ -207,8 +214,9 @@ void Maze::update(sf::RenderWindow *window)
         return;
 
     for (int i = 0; i < maze.size(); i++)
-        for (int j = 0; j < maze[i].size(); j++)
+        for (int j = 0; j < maze[i].size(); j++) {
             maze[i][j].update(window);
+        }
 }
 
 void Maze::render(sf::RenderWindow *window)
@@ -226,6 +234,22 @@ void Maze::render(sf::RenderWindow *window)
             maze[i][j].renderLines(window);
 
     window->draw(player);
+    window->draw(mazeBorder);
+}
+
+void Maze::render(sf::RenderTexture *window) {
+    for (int i = 0; i < maze.size(); i++)
+        for (int j = 0; j < maze[i].size(); j++)
+        {
+            maze[i][j].renderTiles(window);
+            // window->draw(footprints[i][j]);
+        }
+
+    for (int i = 0; i < maze.size(); i++)
+        for (int j = 0; j < maze[i].size(); j++)
+            maze[i][j].renderLines(window);
+
+    // window->draw(player);
     window->draw(mazeBorder);
 }
 

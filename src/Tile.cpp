@@ -108,7 +108,19 @@ void Tile::renderTiles(sf::RenderWindow *window)
     window->draw(tile);
 }
 
+void Tile::renderTiles(sf::RenderTexture *window)
+{
+    window->draw(tile);
+}
+
 void Tile::renderLines(sf::RenderWindow *window)
+{
+    for (int i = 0; i < 2; i++)
+        if (wall[i])
+            window->draw(line[i]);
+}
+
+void Tile::renderLines(sf::RenderTexture *window)
 {
     for (int i = 0; i < 2; i++)
         if (wall[i])
