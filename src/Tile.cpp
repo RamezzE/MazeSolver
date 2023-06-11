@@ -56,6 +56,8 @@ void Tile::setColor(sf::Color tileColor, sf::Color wallColor)
 void Tile::resetColor()
 {
     tile.setFillColor(this->color);
+    line[0].setFillColor(sf::Color(21, 23, 44));
+    line[1].setFillColor(sf::Color(21, 23, 44));
 }
 
 bool Tile::getWall(int index)

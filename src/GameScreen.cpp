@@ -1,12 +1,12 @@
 #include "GameScreen.hpp"
 
-int N = 20;
+int N = 10;
 
 GameScreen::GameScreen(Game *myGame)
 {
     this->game = myGame;
 
-    speedSlider.create(0, 8);
+    speedSlider.create(0, 11);
 
     font.loadFromFile(FONT_PATH);
 
@@ -170,6 +170,15 @@ void GameScreen::update(const float dt)
         maze->setSpeedFactor(256);
         break;
     case 8:
+        maze->setSpeedFactor(312);
+        break;
+    case 9:
+        maze->setSpeedFactor(500);
+        break;
+    case 10:
+        maze->setSpeedFactor(2048);
+        break;
+    default:
         maze->setSpeedFactor(0);
         break;
     }
