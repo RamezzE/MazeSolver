@@ -25,6 +25,10 @@ Maze::Maze(int row, int col, sf::Vector2f size, sf::Vector2f position)
 
     mouseClickCounter = 0;
 
+    correctPathColor = sf::Color::Green;
+    wrongPathColor = sf::Color(23, 28, 116);
+    playerColor = sf::Color(23, 165, 229);
+
     resizeGrid(row, col);
 
     footprints[endX][endY].setFillColor(sf::Color::White);
@@ -47,7 +51,7 @@ void Maze::init()
     mazeBorder.setSize(sf::Vector2f(mazeW, mazeH));
     mazeBorder.setFillColor(sf::Color::Transparent);
 
-    player.setFillColor(sf::Color(23, 165, 229));
+    player.setFillColor(playerColor);
     player.setSize(sf::Vector2f(maze[0][0].getGlobalBounds().width / 2, maze[0][0].getGlobalBounds().height / 2));
 
     footprints.resize(row);
@@ -61,6 +65,8 @@ void Maze::init()
             footprints[i][j].setFillColor(sf::Color::Transparent);
             footprints[i][j].setSize(sf::Vector2f(player.getSize().x / 2, player.getSize().y / 2));
         }
+
+    footprints[endX][endY].setFillColor(sf::Color::White);
 }
 
 void Maze::resize(sf::Vector2f size)
@@ -72,6 +78,11 @@ void Maze::resize(sf::Vector2f size)
         for (int j = 0; j < col; j++)
             maze[i][j].setSize(sf::Vector2f(mazeW / col, mazeH / row));
 
+    player.setSize(sf::Vector2f(maze[0][0].getGlobalBounds().width / 2, maze[0][0].getGlobalBounds().height / 2));
+    for (int i = 0; i < footprints.size(); i++)
+        for (int j = 0; j < footprints[0].size(); j++)
+            footprints[i][j].setSize(sf::Vector2f(player.getSize().x / 2, player.getSize().y / 2));
+    
     mazeBorder.setSize(size);
     setPosition(position);
 }
@@ -89,7 +100,7 @@ void Maze::setPosition(sf::Vector2f position)
         }
 
     mazeBorder.setPosition(maze[0][0].getPosition());
-    player.setPosition(maze[0][0].getGlobalBounds().left + maze[0][0].getGlobalBounds().width / 4, maze[0][0].getGlobalBounds().top + maze[0][0].getGlobalBounds().height / 4);
+    player.setPosition(maze[startX][startY].getGlobalBounds().left + maze[startX][startY].getGlobalBounds().width / 4, maze[startX][startY].getGlobalBounds().top + maze[startX][startY].getGlobalBounds().height / 4);
 }
 
 void Maze::setColors(sf::Color tileColor, sf::Color wallColor, sf::Color outlineColor)
@@ -113,9 +124,7 @@ void Maze::setSpeedFactor(int factor)
 void Maze::resizeGrid(int row, int col)
 {
     for (int i = 0; i < maze.size(); i++)
-    {
         maze[i].clear();
-    }
     maze.clear();
 
     this->row = row;
@@ -472,9 +481,9 @@ void Maze::backTrackCheck(bool backTrack, int i, int j)
     {
         steps--;
         if (reachedEnd)
-            footprints[i][j].setFillColor(sf::Color::Green);
+            footprints[i][j].setFillColor(correctPathColor);
         else
-            footprints[i][j].setFillColor(sf::Color(23, 28, 116));
+            footprints[i][j].setFillColor(wrongPathColor);
     }
     else
     {

@@ -52,7 +52,7 @@ private:
     sf::RectangleShape mazeBorder;
     sf::RectangleShape player;
 
-    sf::Color borderColor, tileColor, wallColor, footPrintColor;
+    sf::Color borderColor, tileColor, wallColor, correctPathColor, wrongPathColor, playerColor;
 
     sf::Vector2f position;
     

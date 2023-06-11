@@ -20,11 +20,11 @@ public:
 
     sf::Text returnText(int x, int y, std::string z, int fontSize);
     void create(int min, int max);
-    float getSliderValue();
     void setSliderValue(float newValue);
     void setSliderPercentValue(float newPercentValue);
     void draw(sf::RenderWindow &window);
 
+    float getSliderValue();
     sf::FloatRect getGlobalBounds();
 
 
