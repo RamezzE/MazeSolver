@@ -23,6 +23,7 @@ public:
     void setPosition(sf::Vector2f position);
     void setColors(sf::Color tileColor, sf::Color wallColor, sf::Color outlineColor);
     void setSpeedFactor(int factor);
+    void setWallThickness(float thickness);
 
     void handleInput(sf::Event event);
     void update(sf::RenderWindow *window);
@@ -65,7 +66,7 @@ private:
     void showPlayer(int i, int j);
     void backTrackCheck(bool backTrack, int i, int j);
     void neighboursUnvisited(std::vector<std::vector<int>> &vec, int i, int j);
-
+    
     bool isMouseOver(Tile tile, sf::RenderWindow *window);
 
 };

@@ -35,15 +35,15 @@ void ExportImageScreen::init()
 
     imagePreviewLabel.setCharacterSize(game->height / 20);
     imagePreviewLabel.setPosition(sf::Vector2f(game->width / 2.0f - imagePreviewLabel.getGlobalBounds().width / 2.0f, game->height / 8.0f));
-    mazePreview.setPosition(sf::Vector2f(game->width / 2.0f, game->height / 2.0f));
 
+    mazePreviewSize = sf::Vector2f(game->width / 2.0f, game->height / 2.0f);
 
-    for (int i = 0; i<myButtons.size(); i++)
+    for (int i = 0; i < myButtons.size(); i++)
         myButtons[i].setCharacterSize(game->height / 20);
 
     myButtons[0].setPosition(sf::Vector2f(game->width / 2.0f, game->height / 1.2f));
 
-    myButtons[1].setPosition(sf::Vector2f(game->width *0.05f, game->height *0.05f));
+    myButtons[1].setPosition(sf::Vector2f(game->width * 0.05f, game->height * 0.05f));
 }
 
 void ExportImageScreen::handleInput()
@@ -51,7 +51,7 @@ void ExportImageScreen::handleInput()
     sf::Event event;
     while (game->window->pollEvent(event))
     {
-        for (int i = 0;i<myButtons.size();i++) 
+        for (int i = 0; i < myButtons.size(); i++)
             myButtons[i].handleInput(event);
 
         if (event.type == sf::Event::Closed)
@@ -70,16 +70,18 @@ void ExportImageScreen::handleInput()
 
 void ExportImageScreen::update(const float dt)
 {
-    for (int i = 0; i<myButtons.size(); i++)
+    for (int i = 0; i < myButtons.size(); i++)
         myButtons[i].update(game->window);
-    
+
     previewMaze();
 
-    if (myButtons[0].isDoAction()) {
+    if (myButtons[0].isDoAction())
+    {
         exportMazeToPNG();
         myButtons[0].didAction();
     }
-    else if (myButtons[1].isDoAction()) {
+    else if (myButtons[1].isDoAction())
+    {
         maze->pause = false;
         dynamic_cast<GameScreen *>(game->getPreviousScreen())->init();
         game->previousScreen();
@@ -95,26 +97,32 @@ void ExportImageScreen::draw()
 
     for (int i = 0; i < myButtons.size(); i++)
         myButtons[i].render(game->window);
-    
 }
 
 void ExportImageScreen::previewMaze()
 {
     Maze tempMaze = *maze;
-    tempMaze.resize(sf::Vector2f(500, 500));
+
+    sf::Vector2f size(game->height / 2, game->height / 2);
+
+    tempMaze.resize(size);
     tempMaze.setColors(sf::Color::White, sf::Color::Black, sf::Color::Black);
     tempMaze.setPosition(sf::Vector2f(0, 0));
 
-    mazeRenderTexture.create(500, 500);
+    mazeRenderTexture.create(size.x, size.y);
     mazeRenderTexture.clear(sf::Color::White);
 
     tempMaze.render(&mazeRenderTexture);
 
     mazeRenderTexture.display();
 
+    mazePreview = sf::Sprite();
+
     mazePreview.setTexture(mazeRenderTexture.getTexture());
     sf::FloatRect temp = mazePreview.getLocalBounds();
     mazePreview.setOrigin(temp.left + temp.width / 2.0f, temp.top + temp.height / 2.0f);
+
+    mazePreview.setPosition(sf::Vector2f(game->width / 2.0f, game->height / 2.0f));
 }
 
 void ExportImageScreen::exportMazeToPNG()

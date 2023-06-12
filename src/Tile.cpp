@@ -11,6 +11,7 @@ Tile::Tile()
 
     wall[0] = true;
     wall[1] = true;
+    wallThickness = 2;
 
     color = sf::Color(224, 223, 224);
 
@@ -31,8 +32,14 @@ void Tile::setSize(sf::Vector2f size)
 {
     tile.setSize(size);
 
-    line[0].setSize(sf::Vector2f(tile.getGlobalBounds().width, 2));
-    line[1].setSize(sf::Vector2f(2, tile.getGlobalBounds().height));
+    line[0].setSize(sf::Vector2f(tile.getGlobalBounds().width, wallThickness));
+    line[1].setSize(sf::Vector2f(wallThickness, tile.getGlobalBounds().height));
+}
+
+void Tile::setWallThickness(float thickness)
+{
+    wallThickness = thickness;
+    setSize(tile.getSize());
 }
 
 void Tile::setWall(int index, bool value)

@@ -11,6 +11,7 @@ public:
     void setPosition(sf::Vector2f position);
     void setSize(sf::Vector2f size);
     void setWall(int index, bool value);
+    void setWallThickness(float thickness);
     void setVisited(bool value);
     void setColor(sf::Color tileColor, sf::Color wallColor);
     
@@ -38,6 +39,7 @@ private:
     sf::RectangleShape tile;
 
     bool wall[2]; // top, , right
+    float wallThickness;
 
     bool visited;
     bool destination;

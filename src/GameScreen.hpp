@@ -53,6 +53,6 @@ private:
 
 	bool resizeMaze, exportMaze;
 
-	Slider speedSlider;
-	sf::Text speedLabel;
+	Slider speedSlider, thicknessSlider;
+	sf::Text speedLabel, thicknessLabel;
 };

@@ -128,6 +128,12 @@ void Maze::setSpeedFactor(int factor)
     this->speedFactor = factor;
 }
 
+void Maze::setWallThickness(float thickness) {
+    for (int i = 0; i < maze.size(); i++)
+        for (int j = 0; j < maze[i].size(); j++)
+            maze[i][j].setWallThickness(thickness);
+}
+
 void Maze::resizeGrid(int row, int col)
 {
     for (int i = 0; i < maze.size(); i++)

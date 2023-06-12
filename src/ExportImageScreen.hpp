@@ -48,4 +48,6 @@ private:
     sf::Image mazeImage;
 
     sf::Text imagePreviewLabel;
+
+    sf::Vector2f mazePreviewSize;
 };
