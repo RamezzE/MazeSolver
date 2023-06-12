@@ -7,7 +7,7 @@
 
 Game::Game() {
 
-    window = new sf::RenderWindow();
+    window = new sf::RenderWindow();	
 	width = myWidth;
 	height = myHeight;
 	
@@ -20,7 +20,15 @@ void Game::changeScreen(GameState* state) {
 }
 
 void Game::previousScreen() {
-	popState();
+	// popState();
+	states.pop_back();
+}
+
+GameState* Game::getPreviousScreen() {
+	if (states.size() < 2)
+		return nullptr;
+	
+	return states[states.size() - 2];
 }
 
 //let it loop back to the saved menu state

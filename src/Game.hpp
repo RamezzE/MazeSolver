@@ -16,10 +16,11 @@ public:
 	void changeScreen(GameState* state);
 	void previousScreen();
 
+	GameState* getPreviousScreen();
+	
 	void gameLoop();
 
 	sf::RenderWindow* window;
-
     ushort width, height;
 
 private:
@@ -29,5 +30,4 @@ private:
 	void pushState(GameState* state);
 	void popState();
 
-	
 };

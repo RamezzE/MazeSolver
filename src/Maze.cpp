@@ -16,7 +16,7 @@ Maze::Maze(int row, int col, sf::Vector2f size, sf::Vector2f position)
 
     speedFactor = 1;
 
-    threadRunning = choosingStartOrEnd = mazeGenerated = false;
+    threadRunning = choosingStartOrEnd = mazeGenerated = pause = false;
 
     startX = startY = 0;
 
@@ -82,7 +82,7 @@ void Maze::resize(sf::Vector2f size)
     for (int i = 0; i < footprints.size(); i++)
         for (int j = 0; j < footprints[0].size(); j++)
             footprints[i][j].setSize(sf::Vector2f(player.getSize().x / 2, player.getSize().y / 2));
-    
+
     mazeBorder.setSize(size);
     setPosition(position);
 }
@@ -112,7 +112,7 @@ void Maze::setColors(sf::Color tileColor, sf::Color wallColor, sf::Color outline
 
     if (!mazeGenerated)
         return;
-    
+
     for (int i = 0; i < maze.size(); i++)
         for (int j = 0; j < maze[i].size(); j++)
             maze[i][j].setColor(tileColor, wallColor);
@@ -214,7 +214,8 @@ void Maze::update(sf::RenderWindow *window)
         return;
 
     for (int i = 0; i < maze.size(); i++)
-        for (int j = 0; j < maze[i].size(); j++) {
+        for (int j = 0; j < maze[i].size(); j++)
+        {
             maze[i][j].update(window);
         }
 }
@@ -237,7 +238,8 @@ void Maze::render(sf::RenderWindow *window)
     window->draw(mazeBorder);
 }
 
-void Maze::render(sf::RenderTexture *window) {
+void Maze::render(sf::RenderTexture *window)
+{
     for (int i = 0; i < maze.size(); i++)
         for (int j = 0; j < maze[i].size(); j++)
         {
@@ -302,6 +304,9 @@ void Maze::generateMaze_helper(int i, int j)
 {
     while (true)
     {
+        while (pause)
+            usleep(10000);
+
         usleep(sleepTime / speedFactor);
         player.setPosition(maze[i][j].getGlobalBounds().left + maze[i][j].getGlobalBounds().width / 4, maze[i][j].getGlobalBounds().top + maze[i][j].getGlobalBounds().height / 4);
         maze[i][j].setColor(tileColor, sf::Color::Magenta);
@@ -426,6 +431,9 @@ void Maze::solveMaze()
 
 void Maze::solveMaze_helper(int i, int j, int endX, int endY) // i & j are startX and startY
 {
+    while (pause)
+        usleep(1000);
+
     showPlayer(i, j);
     backTrackCheck(false, i, j);
 

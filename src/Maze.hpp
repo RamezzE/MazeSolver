@@ -29,7 +29,7 @@ public:
     void render(sf::RenderWindow* window);
     void render(sf::RenderTexture* window);
     
-    bool threadRunning, choosingStartOrEnd, mazeGenerated;
+    bool threadRunning, choosingStartOrEnd, mazeGenerated, pause;
 
     int startX, startY, endX, endY;
 

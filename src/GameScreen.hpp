@@ -6,6 +6,7 @@
 #include <thread>
 #include <filesystem>
 
+#include "ExportImageScreen.hpp"
 #include "Definitions.hpp"
 #include "Game.hpp"
 #include "GameState.hpp"
@@ -17,6 +18,8 @@
 
 namespace fs = std::filesystem;
 
+class ExportImageScreen; //forward declaration
+
 class GameScreen : public GameState
 {
 public:
@@ -26,16 +29,17 @@ public:
 	void update(const float dt);
 	void draw();
 
-	void checkResize(sf::Event event);
-	void exportMazeToPNG();
+	void init();
 
 private:
-	void init();
 	void solveMaze();
+	void checkResize(sf::Event event);
 
 	Game *game;
 
-	Maze* maze;
+	Maze *maze;
+
+	ExportImageScreen *exportImageScreen;
 
 	std::vector<Button> myButtons;
 	std::vector<TextBox> textBoxes;

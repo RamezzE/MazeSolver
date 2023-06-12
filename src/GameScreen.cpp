@@ -7,6 +7,7 @@ GameScreen::GameScreen(Game *myGame)
     this->game = myGame;
 
     speedSlider.create(0, 11);
+    speedSlider.setSliderValue(1);
 
     font.loadFromFile(FONT_PATH);
 
@@ -52,6 +53,7 @@ GameScreen::GameScreen(Game *myGame)
     speedLabel.setFillColor(sf::Color::Magenta);
 
     exportMaze = false;
+    exportImageScreen = new ExportImageScreen(game, maze);
 
     init();
 }
@@ -87,10 +89,10 @@ void GameScreen::init()
 
     speedSlider.setAxisSize(sf::Vector2f(game->width / 5, game->height / 80));
     speedSlider.setHandleSize(sf::Vector2f(game->height / 30, game->height / 20));
-    speedSlider.setPosition(sf::Vector2f(textBoxes[0].getGlobalBounds().width / 4 + (pos.x + size.x) + (game->width - (pos.x + size.x)) / 4 - speedSlider.getGlobalBounds().width / 2, pos.y*2.8));
+    speedSlider.setPosition(sf::Vector2f(textBoxes[0].getGlobalBounds().width / 4 + (pos.x + size.x) + (game->width - (pos.x + size.x)) / 4 - speedSlider.getGlobalBounds().width / 2, pos.y * 2.8));
     speedSlider.setCharacterSize(game->height / 50);
 
-    speedLabel.setPosition(sf::Vector2f(speedSlider.getGlobalBounds().left, pos.y/2));
+    speedLabel.setPosition(sf::Vector2f(speedSlider.getGlobalBounds().left, pos.y / 2));
 }
 
 void GameScreen::handleInput()
@@ -146,39 +148,43 @@ void GameScreen::handleInput()
 
 void GameScreen::update(const float dt)
 {
+    maze->pause = false;
     switch ((int)speedSlider.getSliderValue())
     {
     case 0:
-        maze->setSpeedFactor(1);
+        maze->pause = true;
         break;
     case 1:
-        maze->setSpeedFactor(4);
+        maze->setSpeedFactor(1);
         break;
     case 2:
-        maze->setSpeedFactor(8);
+        maze->setSpeedFactor(4);
         break;
     case 3:
-        maze->setSpeedFactor(16);
+        maze->setSpeedFactor(8);
         break;
     case 4:
-        maze->setSpeedFactor(32);
+        maze->setSpeedFactor(16);
         break;
     case 5:
-        maze->setSpeedFactor(64);
+        maze->setSpeedFactor(32);
         break;
     case 6:
-        maze->setSpeedFactor(128);
+        maze->setSpeedFactor(64);
         break;
     case 7:
-        maze->setSpeedFactor(256);
+        maze->setSpeedFactor(128);
         break;
     case 8:
-        maze->setSpeedFactor(312);
+        maze->setSpeedFactor(256);
         break;
     case 9:
-        maze->setSpeedFactor(500);
+        maze->setSpeedFactor(312);
         break;
     case 10:
+        maze->setSpeedFactor(500);
+        break;
+    case 11:
         maze->setSpeedFactor(2048);
         break;
     default:
@@ -243,9 +249,9 @@ void GameScreen::update(const float dt)
     }
     else if (myButtons[4].isDoAction())
     {
-        myThreads.push_back(std::thread{&GameScreen::exportMazeToPNG, this});
-        myThreads.back().detach();
-
+        maze->pause = true;
+        exportImageScreen->init();
+        game->changeScreen(exportImageScreen);
         myButtons[4].didAction();
     }
 }
@@ -264,48 +270,6 @@ void GameScreen::draw()
 
     speedSlider.render(*(game->window));
     game->window->draw(speedLabel);
-}
-
-void GameScreen::exportMazeToPNG()
-{
-    Maze tempMaze = *maze;
-
-    tempMaze.setColors(sf::Color::White, sf::Color::Black, sf::Color::Black);
-    tempMaze.resize(sf::Vector2f(2000, 2000));
-    tempMaze.setPosition(sf::Vector2f(0, 0));
-
-    sf::RenderTexture texture;
-    texture.create(2000, 2000);
-    texture.clear(sf::Color::White);
-
-    tempMaze.render(&texture);
-    texture.display();
-
-    sf::Image image = texture.getTexture().copyToImage();
-    // get date now
-    time_t now = time(0);
-
-    // create directory if it doesnt exist
-    std::string dir = "Exported Maze Images/";
-    if (!fs::exists(dir))
-        fs::create_directory(dir);
-
-    // save file with current time
-    dir += ctime(&now);
-    char characterToRemove = ':';
-
-    std::string result;
-    for (char c : dir)
-        if (c != characterToRemove && c != '\n')
-            result += c;
-    dir = result;
-
-    // save image
-    image.saveToFile(dir + ".png");
-
-    // open image
-    std::string cmd = "\"" + dir + ".png\"";
-    system(cmd.c_str());
 }
 
 void GameScreen::checkResize(sf::Event event)
