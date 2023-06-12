@@ -42,8 +42,8 @@ GameScreen::GameScreen(Game *myGame)
     myButtons[0].setText("Resize Maze", sf::Color::Magenta);
     myButtons[1].setText("Generate Maze", sf::Color::Magenta);
     myButtons[2].setText("Solve Maze", sf::Color::Magenta);
-    myButtons[3].setText("Choose Start/End", sf::Color::Magenta);
-    myButtons[4].setText("Export as Image", sf::Color::Magenta);
+    myButtons[3].setText("  Choose\nStart/End", sf::Color::Magenta);
+    myButtons[4].setText("  Export\nas Image", sf::Color::Magenta);
 
     speedSlider.setColors(sf::Color(21, 23, 44), sf::Color::Magenta);
 
@@ -76,21 +76,23 @@ void GameScreen::init()
     for (int i = 1; i <= 3; i++)
     {
         sf::FloatRect temp = myButtons[i - 1].getGlobalBounds();
-        myButtons[i - 1].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 2, game->height * 4 / 8 + 2 * myButtons[0].getLocalBounds().height * i));
+        myButtons[i - 1].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 4, game->height * 4 / 8 + 2 * myButtons[0].getLocalBounds().height * i));
     }
 
-    myButtons[3].setPosition(sf::Vector2f(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 2, game->height * 3 / 8)));
+    myButtons[3].setPosition(sf::Vector2f(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 1.2, game->height * 2.5 / 10)));
 
-    myButtons[4].setPosition(sf::Vector2f(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 2, game->height * 1 / 10)));
+    myButtons[4].setPosition(sf::Vector2f(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 1.2, game->height * 1 / 10)));
 
     textBoxes[0].setPosition(sf::Vector2f(myButtons[2].getGlobalBounds().left + myButtons[2].getGlobalBounds().width / 2 - textBoxes[0].getGlobalBounds().width / 2, game->height * 4 / 8));
 
     speedSlider.setAxisSize(sf::Vector2f(game->width / 5, game->height / 80));
     speedSlider.setHandleSize(sf::Vector2f(game->height / 30, game->height / 20));
-    speedSlider.setPosition(sf::Vector2f(textBoxes[0].getGlobalBounds().width / 4 + (pos.x + size.x) + (game->width - (pos.x + size.x)) / 2 - speedSlider.getGlobalBounds().width / 2, game->height * 2.2 / 8));
+    speedSlider.setPosition(sf::Vector2f(textBoxes[0].getGlobalBounds().width / 4 + (pos.x + size.x) + (game->width - (pos.x + size.x)) / 4 - speedSlider.getGlobalBounds().width / 2, pos.y*2.8));
+    speedSlider.setCharacterSize(game->height / 50);
 
-    speedLabel.setPosition(sf::Vector2f(speedSlider.getGlobalBounds().left, game->height * 1.3 / 8));
+    speedLabel.setPosition(sf::Vector2f(speedSlider.getGlobalBounds().left, pos.y/2));
 }
+
 void GameScreen::handleInput()
 {
     sf::Event event;
@@ -144,7 +146,6 @@ void GameScreen::handleInput()
 
 void GameScreen::update(const float dt)
 {
-
     switch ((int)speedSlider.getSliderValue())
     {
     case 0:
@@ -202,7 +203,7 @@ void GameScreen::update(const float dt)
 
         myButtons[4].setEnabled(true);
         resizeMaze = false;
-        return;
+        // return;
     }
     else
     {
@@ -242,7 +243,9 @@ void GameScreen::update(const float dt)
     }
     else if (myButtons[4].isDoAction())
     {
-        exportMazeToPNG();
+        myThreads.push_back(std::thread{&GameScreen::exportMazeToPNG, this});
+        myThreads.back().detach();
+
         myButtons[4].didAction();
     }
 }

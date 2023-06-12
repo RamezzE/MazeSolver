@@ -14,9 +14,12 @@ Slider::Slider()
 
     axis.setFillColor(sf::Color(63, 63, 63));
     handle.setFillColor(sf::Color(192, 192, 192));
+    progress.setFillColor(handle.getFillColor());
 
     if (!font.loadFromFile(FONT_PATH))
         std::cout << "Error loading font\n";
+
+    characterSize = 20;
 
     text.setFont(font);
     text.setFillColor(sf::Color::White);
@@ -27,7 +30,10 @@ void Slider::setPosition(sf::Vector2f position)
     this->position = position;
 
     axis.setPosition(position);
-    handle.setPosition(position);
+    progress.setOrigin(axis.getOrigin());
+    progress.setPosition(axis.getPosition());
+
+    handle.setPosition(position.x + (axisSize.x / (maxValue - minValue)) * (sliderValue - minValue), position.y);
 }
 
 void Slider::setAxisSize(sf::Vector2f size)
@@ -36,6 +42,12 @@ void Slider::setAxisSize(sf::Vector2f size)
     axis.setSize(size);
     sf::FloatRect temp = axis.getLocalBounds();
     axis.setOrigin(temp.left, temp.top + temp.height / 2);
+
+    handle.setPosition(position.x + (axisSize.x / (maxValue - minValue)) * (sliderValue - minValue), position.y);
+
+    progress.setOrigin(axis.getOrigin());
+    progress.setPosition(axis.getPosition());
+    progress.setSize(sf::Vector2f(handle.getGlobalBounds().left - axis.getGlobalBounds().left, axis.getSize().y));
 }
 
 void Slider::setHandleSize(sf::Vector2f size)
@@ -44,12 +56,20 @@ void Slider::setHandleSize(sf::Vector2f size)
     handle.setSize(handleSize);
     sf::FloatRect temp = handle.getLocalBounds();
     handle.setOrigin(temp.left + temp.width / 2, temp.top + temp.height / 2);
+
+    handle.setPosition(position.x + (axisSize.x / (maxValue - minValue)) * (sliderValue - minValue), position.y);
+    progress.setSize(sf::Vector2f(handle.getGlobalBounds().left - axis.getGlobalBounds().left, axis.getSize().y));
 }
 
 void Slider::setColors(sf::Color axisColor, sf::Color handleColor)
 {
     axis.setFillColor(axisColor);
     handle.setFillColor(handleColor);
+    progress.setFillColor(handle.getFillColor());
+}
+
+void Slider::setCharacterSize(float size) {
+    characterSize = size;
 }
 
 sf::Text Slider::returnText(int x, int y, std::string z, int fontSize)
@@ -107,6 +127,8 @@ void Slider::update(sf::RenderWindow *window)
         handle.setPosition(position.x + axisSize.x, position.y);
         sliderValue = (minValue + ((handle.getPosition().x - position.x) / axisSize.x * (maxValue - minValue)));
     }
+
+    progress.setSize(sf::Vector2f(handle.getGlobalBounds().left - axis.getGlobalBounds().left, axis.getSize().y));
 }
 
 float Slider::getSliderValue()
@@ -139,19 +161,19 @@ void Slider::setSliderPercentValue(float newPercentValue)
 
 void Slider::render(sf::RenderWindow &window)
 {
-    // window.draw(returnText(position.x - 10, position.y + 5, std::to_string(minValue), 20));
     window.draw(axis);
-    // window.draw(returnText(position.x + axisSize.x - 10, position.y + 5, std::to_string(maxValue), 20));
-    sf::RectangleShape progress;
-    progress.setOrigin(axis.getOrigin());
-    progress.setPosition(axis.getPosition());
-    progress.setSize(sf::Vector2f(handle.getGlobalBounds().left - axis.getGlobalBounds().left, axis.getSize().y));
-    progress.setFillColor(handle.getFillColor());
-    
+
+    if ((int)sliderValue != minValue)
+        window.draw(returnText(position.x - 10, position.y + 5, std::to_string(minValue), characterSize));
+
+    //round up
+
+    if ((int)ceil(sliderValue) != maxValue)
+        window.draw(returnText(position.x + axisSize.x - 10, position.y + 5, std::to_string(maxValue), characterSize));
+
     window.draw(progress);
     window.draw(handle);
-    window.draw(returnText(handle.getPosition().x - handleSize.x, handle.getPosition().y - handleSize.y,
-                           std::to_string((int)sliderValue), 15));
+    window.draw(returnText(handle.getPosition().x - handleSize.x, handle.getPosition().y - handleSize.y, std::to_string((int)sliderValue), characterSize));
 }
 
 bool Slider::isMouseOver(sf::RectangleShape sprite, sf::RenderWindow *window)

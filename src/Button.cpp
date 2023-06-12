@@ -37,7 +37,7 @@ void Button::setFont(sf::Font &font)
 void Button::setCharacterSize(int size)
 {
     text.setCharacterSize(size);
-    border.setSize(sf::Vector2f(text.getGlobalBounds().width * 1.1, size));
+    border.setSize(sf::Vector2f(text.getGlobalBounds().width * 1.1, text.getGlobalBounds().height * 1.2));
     sf::FloatRect temp = text.getGlobalBounds();
     text.setOrigin(temp.left + temp.width / 2, temp.top + temp.height / 2);
 }
@@ -47,10 +47,10 @@ void Button::setPosition(sf::Vector2f position)
     text.setPosition(position);
 
     sf::FloatRect temp = text.getLocalBounds();
-    text.setOrigin(temp.left + temp.width / 2, temp.top + temp.height / 2);
+    text.setOrigin(temp.left + temp.width / 2.0f, temp.top + temp.height / 2.0f);
 
     temp = border.getLocalBounds();
-    border.setOrigin(temp.left + temp.width / 2, temp.top + temp.height / 2);
+    border.setOrigin(temp.left + temp.width / 2.0f, temp.top + temp.height / 2.0f);
     border.setPosition(position);
 }
 
