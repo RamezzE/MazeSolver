@@ -159,8 +159,10 @@ void Maze::handleInput(sf::Event event)
 {
     if (event.type == sf::Event::MouseButtonPressed)
         if (event.mouseButton.button == sf::Mouse::Left)
-            if (choosingStartOrEnd)
+            if (choosingStartOrEnd) {
                 mouseClicked = true;
+                return;
+            }
 
     for (int i = 0; i < maze.size(); i++)
         for (int j = 0; j < maze[i].size(); j++)
