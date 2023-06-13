@@ -19,7 +19,7 @@ GameScreen::GameScreen(Game *myGame)
 
     font.loadFromFile(FONT_PATH);
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 6; i++)
     {
         myButtons.push_back(Button());
         myButtons[i].setFont(font);
@@ -54,6 +54,7 @@ GameScreen::GameScreen(Game *myGame)
     myButtons[2].setText("Solve Maze", sf::Color::Magenta);
     myButtons[3].setText("  Choose\nStart/End", sf::Color::Magenta);
     myButtons[4].setText("  Export\nas Image", sf::Color::Magenta);
+    myButtons[5].setText("Shortest Path", sf::Color::Magenta);
 
     for (int i = 0; i < 2; i++)
     {
@@ -68,12 +69,24 @@ GameScreen::GameScreen(Game *myGame)
 
     labels[1].setString("Thickness: ");
 
-    exportMaze = false;
+    exportMaze = maximized = false;
     exportImageScreen = new ExportImageScreen(game, maze);
 
-    notesBackground.setFillColor(sf::Color(12, 13, 23, 255));
-    notesText.setFont(font);
-    notesText.setString("N.Bs\n\nOn any cell:\nLeft mouse click: toggle top wall.\nRight mouse click: toggle right wall");
+    for (int i = 0; i < 2; i++)
+    {
+        notesBackground.push_back(sf::RectangleShape());
+        notesBackground[i].setFillColor(sf::Color(12, 13, 23, 255));
+    }
+
+    for (int i = 0; i < 2; i++)
+    {
+        notesText.push_back(sf::Text());
+        notesText[i].setFont(font);
+        notesText[i].setFillColor(sf::Color(255, 255, 255, 128));
+    }
+
+    notesText[0].setString("N.B.\nOn any cell:\nLeft click: toggle top wall.\nRight click: toggle right wall.\n\nSpeed 0 -> pause simulation.\nMax Speed -> Instant effect.");
+    notesText[1].setString("N.B.\nGenerate Maze: generates a\nmaze with only 1 solution\ninitially.\n\nSolve Maze: stops at 1st\nsolution found.");
 
     init();
 }
@@ -89,19 +102,22 @@ void GameScreen::init()
     background.setPosition(0, 0);
     background.setSize(sf::Vector2f(game->width, game->height));
 
-    notesText.setCharacterSize(game->height / 30);
-
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 6; i++)
         myButtons[i].setCharacterSize(game->height / 20);
 
     for (int i = 0; i < 2; i++)
         labels[i].setCharacterSize(game->height / 20);
 
+    for (int i = 0; i < 2; i++)
+        notesText[i].setCharacterSize(game->height / 30);
+
     textBoxes[0].setTextFormat(sf::Color::Magenta, game->height / 20);
     textBoxes[0].setSize(sf::Vector2f(textBoxes[0].getCharacterSize() * 1.3, textBoxes[0].getCharacterSize()));
 
-    for (int i = 1; i < 3; i++)
-        myButtons[i].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 4, game->height * 4 / 10 + myButtons[0].getLocalBounds().height * (i - 1)));
+    myButtons[1].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 4, game->height * 4 / 10 + myButtons[0].getLocalBounds().height * (1 - 1) * 0.7));
+    myButtons[5].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 4, game->height * 4 / 10 + myButtons[0].getLocalBounds().height * (2 - 1) * 0.7));
+
+    myButtons[2].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 4, game->height * 4 / 10 + myButtons[0].getLocalBounds().height * (2) * 0.7));
 
     myButtons[0].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 1.2, game->height * 3.2 / 10));
     textBoxes[0].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 1.2 - textBoxes[0].getGlobalBounds().width / 2, game->height * 1.95 / 10));
@@ -122,11 +138,25 @@ void GameScreen::init()
     labels[0].setPosition(sf::Vector2f(sliders[0]->getGlobalBounds().left, pos.y / 2));
     labels[1].setPosition(sf::Vector2f(sliders[1]->getGlobalBounds().left, pos.y * 3.8));
 
-    notesBackground.setSize(sf::Vector2f((myButtons[0].getGlobalBounds().left - labels[0].getGlobalBounds().left), game->height / 4));
-    notesBackground.setPosition(sf::Vector2f(myButtons[1].getPosition().x - myButtons[1].getGlobalBounds().width / 2.0f, game->height * 6.7 / 10));
+    for (int i = 0; i < 2; i++)
+    {
+        notesBackground[i].setPosition(sf::Vector2f(myButtons[1].getPosition().x - myButtons[1].getGlobalBounds().width / 1.5, game->height * 6.2 / 10));
+        notesBackground[i].setSize(sf::Vector2f((myButtons[0].getGlobalBounds().left - labels[0].getGlobalBounds().left) * 0.74, game->height / 3.37));
+        notesText[i].setPosition(notesBackground[0].getPosition());
+    }
 
-    notesText.setPosition(notesBackground.getPosition());
-    notesText.move(notesText.getCharacterSize() / 3, notesText.getCharacterSize() / 6);
+    notesText[0].move(notesText[1].getCharacterSize() / 3, notesText[1].getCharacterSize() / 6);
+    notesText[1].move(notesText[0].getGlobalBounds().width * 1.16, notesText[1].getCharacterSize() / 6);
+    notesBackground[1].move(notesText[0].getGlobalBounds().width * 1.13, 0);
+
+    if (maximized)
+    {
+        notesText[1].move(19.5, 0);
+        notesBackground[1].move(19.5, 0);
+
+        for (int i = 0;i<2;i++)
+            notesBackground[i].setSize(sf::Vector2f(notesBackground[i].getSize().x*0.9, notesBackground[i].getSize().y));
+    }
 }
 
 void GameScreen::handleInput()
@@ -266,6 +296,7 @@ void GameScreen::update(const float dt)
         {
             myButtons[2].setEnabled(false);
             myButtons[3].setEnabled(false);
+            myButtons[5].setEnabled(false);
         }
     }
 
@@ -300,14 +331,23 @@ void GameScreen::update(const float dt)
         game->changeScreen(exportImageScreen);
         myButtons[4].didAction();
     }
+    else if (myButtons[5].isDoAction())
+    {
+        myThreads.push_back(std::thread{&Maze::findShortestPath, std::ref(maze)});
+        myThreads.back().detach();
+        myButtons[5].didAction();
+    }
 }
 
 void GameScreen::draw()
 {
     game->window->draw(background);
 
-    game->window->draw(notesBackground);
-    game->window->draw(notesText);
+    for (int i = 0; i < notesBackground.size(); i++)
+        game->window->draw(notesBackground[i]);
+
+    for (int i = 0; i < notesText.size(); i++)
+        game->window->draw(notesText[i]);
 
     for (int i = 0; i < myButtons.size(); i++)
         myButtons[i].render(game->window);
@@ -360,11 +400,17 @@ void GameScreen::checkResize(sf::Event event)
 
     if (event.size.height == sf::VideoMode::getDesktopMode().height || event.size.width == sf::VideoMode::getDesktopMode().width)
     {
-        game->window->setPosition(sf::Vector2i(0, 0));
+        if (!event.size.height == sf::VideoMode::getDesktopMode().height || !event.size.width == sf::VideoMode::getDesktopMode().width)
+            game->window->setPosition(sf::Vector2i(0,0));
+        
         game->window->setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
+        maximized = true;
     }
     else
+    {
+        maximized = false;
         game->window->setView(sf::View(visibleArea));
+    }
 
     game->width = game->window->getSize().x;
     game->height = game->window->getSize().y;

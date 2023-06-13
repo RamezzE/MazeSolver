@@ -51,11 +51,12 @@ private:
 	sf::RectangleShape background;
 	sf::Texture bgImg;
 
-	sf::RectangleShape notesBackground;
-	sf::Text notesText;
+	std::vector<sf::RectangleShape> notesBackground;
+	std::vector<sf::Text> notesText;
 
-	bool resizeMaze, exportMaze;
+	bool resizeMaze, exportMaze, maximized;
 
 	std::vector<Slider*> sliders;
 	std::vector<sf::Text> labels;
+
 };

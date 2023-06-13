@@ -17,6 +17,7 @@ public:
 
     void generateMaze();
     void solveMaze();
+    void findShortestPath();
 
     void resizeGrid(int row, int col);
 
@@ -42,7 +43,7 @@ private:
     float sleepTime;
     int speedFactor, mouseClickCounter;
 
-    bool reachedEnd, mouseClicked;
+    bool reachedEnd, mouseClicked, shortestPathAlgorithm;
 
     std::vector<std::vector<Tile>> maze;
     std::vector<std::vector<sf::RectangleShape>> footprints;
@@ -63,6 +64,7 @@ private:
     void clearMaze();
     void generateMaze_helper(int i, int j);
     void solveMaze_helper(int startX, int startY, int endX, int endY);
+
     void showPlayer(int i, int j);
     void backTrackCheck(bool backTrack, int i, int j);
     void neighboursUnvisited(std::vector<std::vector<int>> &vec, int i, int j);
