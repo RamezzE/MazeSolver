@@ -44,6 +44,7 @@ private:
     bool visited;
     bool destination;
     bool mouseOver;
+    bool mouseIsPressed, changed;
 
     sf::Color color;
 

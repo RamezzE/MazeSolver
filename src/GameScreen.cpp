@@ -15,7 +15,7 @@ GameScreen::GameScreen(Game *myGame)
     sliders[0]->create(0, 11);
     sliders[0]->setSliderValue(1);
 
-    sliders[1]->create(1, 7);
+    sliders[1]->create(1, 4);
 
     font.loadFromFile(FONT_PATH);
 
@@ -42,13 +42,14 @@ GameScreen::GameScreen(Game *myGame)
     background.setTexture(&bgImg);
 
     sf::Vector2f size(game->height / 1.2, game->height / 1.2);
-    sf::Vector2f pos(game->width * 0.025, game->height * 0.025);
+
+    sf::Vector2f pos(game->width * 0.025, game->height / 2 - size.y / 2);
     maze = new Maze(N, N, size, pos);
     maze->setColors(sf::Color(12, 13, 23, 255), sf::Color(21, 23, 44), sf::Color(21, 23, 44));
 
     game->window->setPosition(sf::Vector2i(0, 0));
 
-    myButtons[0].setText("Resize Maze", sf::Color::Magenta);
+    myButtons[0].setText("  Resize  \n   Maze  ", sf::Color::Magenta);
     myButtons[1].setText("Generate Maze", sf::Color::Magenta);
     myButtons[2].setText("Solve Maze", sf::Color::Magenta);
     myButtons[3].setText("  Choose\nStart/End", sf::Color::Magenta);
@@ -59,6 +60,8 @@ GameScreen::GameScreen(Game *myGame)
         labels.push_back(sf::Text());
         labels[i].setFont(font);
         labels[i].setFillColor(sf::Color::Magenta);
+        labels[i].setOutlineColor(sf::Color(12, 13, 23, 255));
+        labels[i].setOutlineThickness(1);
     }
 
     labels[0].setString("Speed: ");
@@ -67,6 +70,10 @@ GameScreen::GameScreen(Game *myGame)
 
     exportMaze = false;
     exportImageScreen = new ExportImageScreen(game, maze);
+
+    notesBackground.setFillColor(sf::Color(12, 13, 23, 255));
+    notesText.setFont(font);
+    notesText.setString("N.Bs\n\nOn any cell:\nLeft mouse click: toggle top wall.\nRight mouse click: toggle right wall");
 
     init();
 }
@@ -77,9 +84,12 @@ void GameScreen::init()
     sf::Vector2f pos(game->width * 0.05, game->height * 0.05);
 
     maze->resize(size);
+    maze->setPosition(sf::Vector2f(game->width * 0.025, game->height / 2 - size.y / 2));
 
     background.setPosition(0, 0);
     background.setSize(sf::Vector2f(game->width, game->height));
+
+    notesText.setCharacterSize(game->height / 30);
 
     for (int i = 0; i < 5; i++)
         myButtons[i].setCharacterSize(game->height / 20);
@@ -88,22 +98,18 @@ void GameScreen::init()
         labels[i].setCharacterSize(game->height / 20);
 
     textBoxes[0].setTextFormat(sf::Color::Magenta, game->height / 20);
-    textBoxes[0].setSize(sf::Vector2f(textBoxes[0].getCharacterSize() * 1.2, textBoxes[0].getCharacterSize()));
+    textBoxes[0].setSize(sf::Vector2f(textBoxes[0].getCharacterSize() * 1.3, textBoxes[0].getCharacterSize()));
 
-    for (int i = 1; i <= 3; i++)
+    for (int i = 1; i < 3; i++)
+        myButtons[i].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 4, game->height * 4 / 10 + myButtons[0].getLocalBounds().height * (i - 1)));
+
+    myButtons[0].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 1.2, game->height * 3.2 / 10));
+    textBoxes[0].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 1.2 - textBoxes[0].getGlobalBounds().width / 2, game->height * 1.95 / 10));
+    myButtons[3].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 1.2, game->height * 4.75 / 10));
+    myButtons[4].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 1.2, game->height * 1 / 10));
+
+    for (int i = 0; i < sliders.size(); i++)
     {
-        sf::FloatRect temp = myButtons[i - 1].getGlobalBounds();
-        myButtons[i - 1].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 4, game->height * 4 / 8 + 2 * myButtons[0].getLocalBounds().height * i));
-    }
-
-    myButtons[3].setPosition(sf::Vector2f(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 1.2, game->height * 2.5 / 10)));
-
-    myButtons[4].setPosition(sf::Vector2f(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 1.2, game->height * 1 / 10)));
-
-    textBoxes[0].setPosition(sf::Vector2f(myButtons[2].getGlobalBounds().left + myButtons[2].getGlobalBounds().width / 2 - textBoxes[0].getGlobalBounds().width / 2, game->height * 4 / 8));
-
-
-    for (int i = 0;i<sliders.size();i++) {
         sliders[i]->setAxisSize(sf::Vector2f(game->width / 5, game->height / 80));
         sliders[i]->setHandleSize(sf::Vector2f(game->height / 30, game->height / 20));
         sliders[i]->setCharacterSize(game->height / 50);
@@ -115,6 +121,12 @@ void GameScreen::init()
 
     labels[0].setPosition(sf::Vector2f(sliders[0]->getGlobalBounds().left, pos.y / 2));
     labels[1].setPosition(sf::Vector2f(sliders[1]->getGlobalBounds().left, pos.y * 3.8));
+
+    notesBackground.setSize(sf::Vector2f((myButtons[0].getGlobalBounds().left - labels[0].getGlobalBounds().left), game->height / 4));
+    notesBackground.setPosition(sf::Vector2f(myButtons[1].getPosition().x - myButtons[1].getGlobalBounds().width / 2.0f, game->height * 6.7 / 10));
+
+    notesText.setPosition(notesBackground.getPosition());
+    notesText.move(notesText.getCharacterSize() / 3, notesText.getCharacterSize() / 6);
 }
 
 void GameScreen::handleInput()
@@ -128,6 +140,11 @@ void GameScreen::handleInput()
 
         for (int i = 0; i < sliders.size(); i++)
             sliders[i]->handleInput(event);
+
+        for (int i = 0; i < myButtons.size(); i++)
+            myButtons[i].handleInput(event);
+
+        maze->handleInput(event);
 
         if (event.type == sf::Event::Resized)
         {
@@ -154,18 +171,6 @@ void GameScreen::handleInput()
                 }
             }
         }
-
-        if (event.type == sf::Event::MouseButtonPressed)
-        {
-            maze->handleInput(event);
-            for (int i = 0; i < myButtons.size(); i++)
-                myButtons[i].handleInput(event);
-            return;
-        }
-
-        if (event.type == sf::Event::MouseButtonReleased)
-            for (int i = 0; i < myButtons.size(); i++)
-                myButtons[i].handleInput(event);
     }
 }
 
@@ -229,15 +234,6 @@ void GameScreen::update(const float dt)
         break;
     case 4:
         maze->setWallThickness(16);
-        break;
-    case 5:
-        maze->setWallThickness(24);
-        break;
-    case 6:
-        maze->setWallThickness(32);
-        break;
-    case 7:
-        maze->setWallThickness(40);
         break;
     }
 
@@ -309,6 +305,9 @@ void GameScreen::update(const float dt)
 void GameScreen::draw()
 {
     game->window->draw(background);
+
+    game->window->draw(notesBackground);
+    game->window->draw(notesText);
 
     for (int i = 0; i < myButtons.size(); i++)
         myButtons[i].render(game->window);

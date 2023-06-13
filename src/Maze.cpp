@@ -101,6 +101,7 @@ void Maze::setPosition(sf::Vector2f position)
 
     mazeBorder.setPosition(maze[0][0].getPosition());
     player.setPosition(maze[startX][startY].getGlobalBounds().left + maze[startX][startY].getGlobalBounds().width / 4, maze[startX][startY].getGlobalBounds().top + maze[startX][startY].getGlobalBounds().height / 4);
+    this->position = position;
 }
 
 void Maze::setColors(sf::Color tileColor, sf::Color wallColor, sf::Color outlineColor)
@@ -156,13 +157,9 @@ void Maze::resizeGrid(int row, int col)
 void Maze::handleInput(sf::Event event)
 {
     if (event.type == sf::Event::MouseButtonPressed)
-    {
         if (event.mouseButton.button == sf::Mouse::Left)
-        {
             if (choosingStartOrEnd)
                 mouseClicked = true;
-        }
-    }
 
     for (int i = 0; i < maze.size(); i++)
         for (int j = 0; j < maze[i].size(); j++)

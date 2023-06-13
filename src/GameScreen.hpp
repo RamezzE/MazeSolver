@@ -51,6 +51,9 @@ private:
 	sf::RectangleShape background;
 	sf::Texture bgImg;
 
+	sf::RectangleShape notesBackground;
+	sf::Text notesText;
+
 	bool resizeMaze, exportMaze;
 
 	std::vector<Slider*> sliders;

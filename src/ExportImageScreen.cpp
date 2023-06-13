@@ -166,23 +166,17 @@ void ExportImageScreen::update(const float dt)
         }
         else if (myButtons[2].getTextColor() == sf::Color(12, 13, 23, 255))
         {
-
             myButtons[2].setText("Toggle Color", sf::Color::Black);
             myButtons[2].setBackgroundColor(sf::Color::White);
         }
-        else if (myButtons[2].getTextColor() == sf::Color::White)
-        {
-            myButtons[2].setText("Toggle Color", sf::Color::White);
-            myButtons[2].setBackgroundColor(sf::Color::Black);
-        }
         else if (myButtons[2].getTextColor() == sf::Color::Black)
         {
-            myButtons[2].setText("Toggle Color", sf::Color::Magenta);
+            myButtons[2].setText("Toggle Color", sf::Color::White);
             myButtons[2].setBackgroundColor(sf::Color::Black);
         }
-        else
+        else if (myButtons[2].getTextColor() == sf::Color::White)
         {
-            myButtons[2].setText("Toggle Color", sf::Color::White);
+            myButtons[2].setText("Toggle Color", sf::Color::Magenta);
             myButtons[2].setBackgroundColor(sf::Color(12, 13, 23, 255));
         }
 
@@ -192,8 +186,6 @@ void ExportImageScreen::update(const float dt)
 
         //open folder in current directory. folder name is variable 
         std::string command = "cd " + imagesFolder + " && explorer .";
-        // std::string command = "start \"/" + imagesFolder.substr(0,imagesFolder.length()-1) + "\"";
-        std::cout << command << std::endl;
         system(command.c_str());
 
         myButtons[3].didAction();

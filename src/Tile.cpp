@@ -16,6 +16,7 @@ Tile::Tile()
     color = sf::Color(224, 223, 224);
 
     destination = false;
+    mouseIsPressed = changed = false;
 }
 
 void Tile::setPosition(sf::Vector2f position)
@@ -90,17 +91,11 @@ bool Tile::isVisited()
 void Tile::handleInput(sf::Event event)
 {
     if (event.type == sf::Event::MouseButtonPressed)
+        mouseIsPressed = true;
+    else if (event.type == sf::Event::MouseButtonReleased)
     {
-        if (event.mouseButton.button == sf::Mouse::Left)
-        {
-            if (mouseOver)
-                wall[0] = !wall[0];
-        }
-        else if (event.mouseButton.button == sf::Mouse::Right)
-        {
-            if (mouseOver)
-                wall[1] = !wall[1];
-        }
+        mouseIsPressed = false;
+        changed = false;
     }
 }
 
@@ -110,6 +105,26 @@ void Tile::update(sf::RenderWindow *window)
         mouseOver = true;
     else
         mouseOver = false;
+
+    if (mouseOver && mouseIsPressed)
+    {
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        {
+            if (!changed)
+            {
+                wall[0] = !wall[0];
+                changed = true;
+            }
+        }
+        else if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+        {
+            if (!changed)
+            {
+                wall[1] = !wall[1];
+                changed = true;
+            }
+        }
+    }
 }
 
 void Tile::renderTiles(sf::RenderWindow *window)
