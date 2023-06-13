@@ -59,6 +59,7 @@ void Button::setText(std::string text, sf::Color color)
     this->text.setString(text);
     this->text.setFillColor(color);
     textColor = color;
+    hoverColor = color;
 
     border.setSize(sf::Vector2f(this->text.getGlobalBounds().width * 1.1, this->text.getCharacterSize()));
 }
@@ -118,7 +119,7 @@ void Button::update(sf::RenderWindow *window)
 
     if (mouseOver)
     {
-        border.setOutlineColor(sf::Color::Magenta);
+        border.setOutlineColor(hoverColor);
         border.setFillColor(sf::Color::Transparent);
     }
     else
@@ -159,6 +160,16 @@ sf::FloatRect Button::getGlobalBounds()
 sf::FloatRect Button::getLocalBounds()
 {
     return border.getLocalBounds();
+}
+
+sf::Vector2f Button::getPosition()
+{
+    return border.getPosition();
+}
+
+sf::Color Button::getTextColor()
+{
+    return textColor;
 }
 
 bool Button::isDoAction()

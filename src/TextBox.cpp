@@ -233,7 +233,7 @@ int TextBox::getCharacterSize()
     return text.getCharacterSize();
 }
 
-sf::Vector2f TextBox::getPostion()
+sf::Vector2f TextBox::getPosition()
 {
     return position;
 }

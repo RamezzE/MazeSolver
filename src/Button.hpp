@@ -31,6 +31,8 @@ public:
 
     sf::FloatRect getGlobalBounds();
     sf::FloatRect getLocalBounds();
+    sf::Vector2f getPosition();
+    sf::Color getTextColor();
 
 private:
     void init();
@@ -43,5 +45,5 @@ private:
 
     bool mouseOver, pressed, doAction, enabled;
 
-    sf::Color pressedColor, backgroundColor, borderColor, textColor;
+    sf::Color pressedColor, backgroundColor, borderColor, textColor, hoverColor;
 };

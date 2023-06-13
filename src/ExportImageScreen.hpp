@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <filesystem>
 #include <vector>
+#include <string>
 
 #include "Definitions.hpp"
 #include "Game.hpp"
@@ -14,7 +15,7 @@
 
 namespace fs = std::filesystem;
 
-class GameScreen; //forward declaration
+class GameScreen; // forward declaration
 
 class ExportImageScreen : public GameState
 {
@@ -31,6 +32,7 @@ public:
 private:
     void previewMaze();
     void checkResize(sf::Event event);
+    void setPreviewColor(Maze &tempMaze);
 
     Game *game;
     Maze *maze;
@@ -47,9 +49,12 @@ private:
 
     sf::Image mazeImage;
 
-    sf::Text imagePreviewLabel;
+    sf::Text imagePreviewLabel, X;
 
     sf::Vector2f mazePreviewSize;
 
     std::vector<TextBox> textboxes;
+    std::vector<sf::Text> labels;
+
+    std::string imagesFolder;
 };

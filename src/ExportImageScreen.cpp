@@ -7,36 +7,39 @@ ExportImageScreen::ExportImageScreen(Game *myGame, Maze *maze)
     bgImg.loadFromFile(BACKGROUND_PATH);
     background.setTexture(&bgImg);
 
+    imagesFolder = "Exported Maze Images/";
+
     font.loadFromFile(FONT_PATH);
 
-    for (int i = 0; i < 1; i++)
+    for (int i = 0; i < 3; i++)
         textboxes.push_back(TextBox(font));
 
-    // time of now
+    for (int i = 0; i < 2; i++)
+    {
+        labels.push_back(sf::Text());
+        labels[i].setFont(font);
+    }
 
-    time_t now = time(0);
+    labels[0].setString("File Name: ");
+    labels[1].setString("Image dimensions: ");
 
-    std::string dir = "Exported Maze Images/";
-
-    // save file with current time
-    char characterToRemove = ':';
-
-    std::string fileName = ctime(&now);
-
-    std::string result;
-    for (char c : fileName)
-        if (c != characterToRemove && c != '\n')
-            result += c;
-    fileName = result;
+    for (int i = 0; i < textboxes.size(); i++)
+    {
+        textboxes[i].setBackgroundColor(sf::Color(12, 13, 23, 255));
+        textboxes[i].setBorder(3, sf::Color(12, 13, 23, 255), sf::Color(173, 172, 173), sf::Color::White);
+    }
 
     textboxes[0].setTextLimit(100);
     textboxes[0].allowAlphaNumeric();
 
-    textboxes[0].setTextFormat(sf::Color::Magenta, game->height / 20);
-    textboxes[0].setBackgroundColor(sf::Color(12, 13, 23, 255));
-    textboxes[0].setBorder(3, sf::Color(12, 13, 23, 255), sf::Color(173, 172, 173), sf::Color::Magenta);
+    for (int i = 1; i < 3; i++)
+    {
+        textboxes[i].setTextLimit(4);
+        textboxes[i].allowNumberOnly();
+        textboxes[i].setString("2000");
+    }
 
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 4; i++)
     {
         myButtons.push_back(Button());
         myButtons[i].setFont(font);
@@ -44,13 +47,19 @@ ExportImageScreen::ExportImageScreen(Game *myGame, Maze *maze)
         myButtons[i].setBorder(sf::Color(12, 13, 23, 255), 2);
         myButtons[i].setBackgroundColor(sf::Color(12, 13, 23, 255));
     }
+    myButtons[2].setBackgroundColor(sf::Color::White);
+    myButtons[3].setBackgroundColor(sf::Color::Black);
+
+    X.setFont(font);
+    X.setString("X");
 
     imagePreviewLabel.setString("Maze Preview: ");
     imagePreviewLabel.setFont(font);
-    imagePreviewLabel.setFillColor(sf::Color::White);
 
     myButtons[0].setText("Export", sf::Color::Magenta);
     myButtons[1].setText("Back", sf::Color::Magenta);
+    myButtons[2].setText("Toggle Color", sf::Color::Black);
+    myButtons[3].setText("Open Folder", sf::Color::White);
 
     init();
 }
@@ -68,17 +77,37 @@ void ExportImageScreen::init()
     for (int i = 0; i < myButtons.size(); i++)
         myButtons[i].setCharacterSize(game->height / 20);
 
+    for (int i = 0; i < labels.size(); i++)
+        labels[i].setCharacterSize(game->height / 30);
+
+    X.setCharacterSize(game->height / 30);
+
     myButtons[0].setPosition(sf::Vector2f(game->width / 2.0f, game->height / 1.2f));
 
     myButtons[1].setPosition(sf::Vector2f(game->width * 0.05f, game->height * 0.05f));
 
     for (int i = 0; i < textboxes.size(); i++)
     {
-        textboxes[i].setTextFormat(sf::Color::Magenta, game->height / 20);
-        textboxes[i].setSize(sf::Vector2f(game->width * 0.3, textboxes[i].getCharacterSize() * 1.2 ));
+        textboxes[i].setTextFormat(sf::Color::White, game->height / 20);
+        textboxes[i].setSize(sf::Vector2f(game->width * 0.3, textboxes[i].getCharacterSize() * 1.2));
     }
 
-    textboxes[0].setPosition(sf::Vector2f(game->width * 0.025f,game->height * 0.2f));
+    for (int i = 1; i < 3; i++)
+        textboxes[i].setSize(sf::Vector2f(game->width * 0.07, textboxes[0].getCharacterSize() * 1.2));
+
+    labels[0].setPosition(sf::Vector2f(game->width * 0.025, game->height * 0.2));
+    textboxes[0].setPosition(sf::Vector2f(game->width * 0.025f, game->height * 0.25f));
+
+    labels[1].setPosition(sf::Vector2f(game->width * 0.025, game->height * 0.35));
+    textboxes[1].setPosition(sf::Vector2f(game->width * 0.025f, game->height * 0.4f));
+    textboxes[2].setPosition(sf::Vector2f(textboxes[1].getPosition().x + textboxes[1].getGlobalBounds().width * 1.25, textboxes[1].getPosition().y));
+
+    X.setOrigin(X.getLocalBounds().left, X.getLocalBounds().top + X.getLocalBounds().height / 2.0f);
+    sf::Vector2f pos(textboxes[1].getPosition().x + textboxes[1].getGlobalBounds().width * 1, (textboxes[1].getPosition().y + (textboxes[1].getPosition().y + textboxes[1].getGlobalBounds().height)) / 2);
+    X.setPosition(pos);
+
+    myButtons[2].setPosition(sf::Vector2f(game->width / 1.5 + myButtons[2].getGlobalBounds().width / 2, textboxes[0].getPosition().y + myButtons[2].getGlobalBounds().height / 2));
+    myButtons[3].setPosition(sf::Vector2f(textboxes[0].getPosition().x + myButtons[3].getGlobalBounds().width / 2, myButtons[0].getPosition().y));
 }
 
 void ExportImageScreen::handleInput()
@@ -128,6 +157,47 @@ void ExportImageScreen::update(const float dt)
         game->previousScreen();
         myButtons[1].didAction();
     }
+    else if (myButtons[2].isDoAction())
+    {
+        if (myButtons[2].getTextColor() == sf::Color::Magenta)
+        {
+            myButtons[2].setText("Toggle Color", sf::Color(12, 13, 23, 255));
+            myButtons[2].setBackgroundColor(sf::Color::Magenta);
+        }
+        else if (myButtons[2].getTextColor() == sf::Color(12, 13, 23, 255))
+        {
+
+            myButtons[2].setText("Toggle Color", sf::Color::Black);
+            myButtons[2].setBackgroundColor(sf::Color::White);
+        }
+        else if (myButtons[2].getTextColor() == sf::Color::White)
+        {
+            myButtons[2].setText("Toggle Color", sf::Color::White);
+            myButtons[2].setBackgroundColor(sf::Color::Black);
+        }
+        else if (myButtons[2].getTextColor() == sf::Color::Black)
+        {
+            myButtons[2].setText("Toggle Color", sf::Color::Magenta);
+            myButtons[2].setBackgroundColor(sf::Color::Black);
+        }
+        else
+        {
+            myButtons[2].setText("Toggle Color", sf::Color::White);
+            myButtons[2].setBackgroundColor(sf::Color(12, 13, 23, 255));
+        }
+
+        myButtons[2].didAction();
+    }
+    else if (myButtons[3].isDoAction()) {
+
+        //open folder in current directory. folder name is variable 
+        std::string command = "cd " + imagesFolder + " && explorer .";
+        // std::string command = "start \"/" + imagesFolder.substr(0,imagesFolder.length()-1) + "\"";
+        std::cout << command << std::endl;
+        system(command.c_str());
+
+        myButtons[3].didAction();
+    }
 }
 
 void ExportImageScreen::draw()
@@ -135,12 +205,16 @@ void ExportImageScreen::draw()
     game->window->draw(background);
     game->window->draw(mazePreview);
     game->window->draw(imagePreviewLabel);
+    game->window->draw(X);
 
     for (int i = 0; i < myButtons.size(); i++)
         myButtons[i].render(game->window);
 
     for (int i = 0; i < textboxes.size(); i++)
         textboxes[i].draw(game->window);
+
+    for (int i = 0; i < labels.size(); i++)
+        game->window->draw(labels[i]);
 }
 
 void ExportImageScreen::previewMaze()
@@ -149,8 +223,10 @@ void ExportImageScreen::previewMaze()
 
     sf::Vector2f size(game->height / 2, game->height / 2);
 
+    setPreviewColor(tempMaze);
+
     tempMaze.resize(size);
-    tempMaze.setColors(sf::Color::White, sf::Color::Black, sf::Color::Black);
+
     tempMaze.setPosition(sf::Vector2f(0, 0));
 
     mazeRenderTexture.create(size.x, size.y);
@@ -169,15 +245,40 @@ void ExportImageScreen::previewMaze()
     mazePreview.setPosition(sf::Vector2f(game->width / 2.0f, game->height / 2.0f));
 }
 
+std::string trim(const std::string &str)
+{
+    size_t first = str.find_first_not_of(" \t\n\r\f\v");
+    if (first == std::string::npos)
+        return "";
+
+    size_t last = str.find_last_not_of(" \t\n\r\f\v");
+    return str.substr(first, (last - first + 1));
+}
+
 void ExportImageScreen::exportMazeToPNG()
 {
     Maze tempMaze = *maze;
-    tempMaze.setColors(sf::Color::White, sf::Color::Black, sf::Color::Black);
-    tempMaze.resize(sf::Vector2f(2000, 2000));
+
+    setPreviewColor(tempMaze);
+
+    int width = std::stoi(textboxes[1].getString());
+    int height = std::stoi(textboxes[2].getString());
+
+    if (trim(textboxes[1].getString()).length() == 0 && trim(textboxes[2].getString()).length() == 0)
+        width = height = 2000;
+    else
+    {
+        if (width < 1)
+            width = 1;
+        if (height < 1)
+            height = 1;
+    }
+
+    tempMaze.resize(sf::Vector2f(width, height));
     tempMaze.setPosition(sf::Vector2f(0, 0));
 
     sf::RenderTexture texture;
-    texture.create(2000, 2000);
+    texture.create(width, height);
     texture.clear(sf::Color::White);
 
     tempMaze.render(&texture);
@@ -188,7 +289,7 @@ void ExportImageScreen::exportMazeToPNG()
     time_t now = time(0);
 
     // create directory if it doesnt exist
-    std::string dir = "Exported Maze Images/";
+    std::string dir = imagesFolder;
     if (!fs::exists(dir))
         fs::create_directory(dir);
 
@@ -202,12 +303,36 @@ void ExportImageScreen::exportMazeToPNG()
             result += c;
     dir = result;
 
+    std::string fileName = trim(textboxes[0].getString());
+    if (fileName.length() > 0)
+        dir = imagesFolder + fileName;
+
     // save image
     image.saveToFile(dir + ".png");
 
     // open image
     std::string cmd = "\"" + dir + ".png\"";
     system(cmd.c_str());
+}
+
+void ExportImageScreen::setPreviewColor(Maze &tempMaze)
+{
+    if (myButtons[2].getTextColor() == sf::Color::White)
+    {
+        tempMaze.setColors(sf::Color::Black, sf::Color::White, sf::Color::White);
+    }
+    else if (myButtons[2].getTextColor() == sf::Color::Black)
+    {
+        tempMaze.setColors(sf::Color::White, sf::Color::Black, sf::Color::Black);
+    }
+    else if (myButtons[2].getTextColor() == sf::Color::Magenta)
+    {
+        tempMaze.setColors(sf::Color(12, 13, 23, 255), sf::Color::Magenta, sf::Color(21, 23, 44));
+    }
+    else if (myButtons[2].getTextColor() == sf::Color(12, 13, 23, 255))
+    {
+        tempMaze.setColors(sf::Color::Magenta, sf::Color(12, 13, 23, 255), sf::Color(21, 23, 44));
+    }
 }
 
 void ExportImageScreen::checkResize(sf::Event event)

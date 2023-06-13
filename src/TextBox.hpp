@@ -43,7 +43,7 @@ public:
 
     bool isSelected();
 
-    sf::Vector2f getPostion();
+    sf::Vector2f getPosition();
 
     sf::FloatRect getGlobalBounds();
 
