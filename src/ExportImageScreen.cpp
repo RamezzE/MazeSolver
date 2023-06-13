@@ -9,6 +9,33 @@ ExportImageScreen::ExportImageScreen(Game *myGame, Maze *maze)
 
     font.loadFromFile(FONT_PATH);
 
+    for (int i = 0; i < 1; i++)
+        textboxes.push_back(TextBox(font));
+
+    // time of now
+
+    time_t now = time(0);
+
+    std::string dir = "Exported Maze Images/";
+
+    // save file with current time
+    char characterToRemove = ':';
+
+    std::string fileName = ctime(&now);
+
+    std::string result;
+    for (char c : fileName)
+        if (c != characterToRemove && c != '\n')
+            result += c;
+    fileName = result;
+
+    textboxes[0].setTextLimit(100);
+    textboxes[0].allowAlphaNumeric();
+
+    textboxes[0].setTextFormat(sf::Color::Magenta, game->height / 20);
+    textboxes[0].setBackgroundColor(sf::Color(12, 13, 23, 255));
+    textboxes[0].setBorder(3, sf::Color(12, 13, 23, 255), sf::Color(173, 172, 173), sf::Color::Magenta);
+
     for (int i = 0; i < 2; i++)
     {
         myButtons.push_back(Button());
@@ -44,6 +71,14 @@ void ExportImageScreen::init()
     myButtons[0].setPosition(sf::Vector2f(game->width / 2.0f, game->height / 1.2f));
 
     myButtons[1].setPosition(sf::Vector2f(game->width * 0.05f, game->height * 0.05f));
+
+    for (int i = 0; i < textboxes.size(); i++)
+    {
+        textboxes[i].setTextFormat(sf::Color::Magenta, game->height / 20);
+        textboxes[i].setSize(sf::Vector2f(game->width * 0.3, textboxes[i].getCharacterSize() * 1.2 ));
+    }
+
+    textboxes[0].setPosition(sf::Vector2f(game->width * 0.025f,game->height * 0.2f));
 }
 
 void ExportImageScreen::handleInput()
@@ -53,6 +88,9 @@ void ExportImageScreen::handleInput()
     {
         for (int i = 0; i < myButtons.size(); i++)
             myButtons[i].handleInput(event);
+
+        for (int i = 0; i < textboxes.size(); i++)
+            textboxes[i].handleInput(event);
 
         if (event.type == sf::Event::Closed)
         {
@@ -72,6 +110,9 @@ void ExportImageScreen::update(const float dt)
 {
     for (int i = 0; i < myButtons.size(); i++)
         myButtons[i].update(game->window);
+
+    for (int i = 0; i < textboxes.size(); i++)
+        textboxes[i].update(game->window);
 
     previewMaze();
 
@@ -97,6 +138,9 @@ void ExportImageScreen::draw()
 
     for (int i = 0; i < myButtons.size(); i++)
         myButtons[i].render(game->window);
+
+    for (int i = 0; i < textboxes.size(); i++)
+        textboxes[i].draw(game->window);
 }
 
 void ExportImageScreen::previewMaze()

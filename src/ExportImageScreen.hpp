@@ -10,7 +10,7 @@
 #include "Maze.hpp"
 #include "GameScreen.hpp"
 #include "Button.hpp"
-
+#include "TextBox.hpp"
 
 namespace fs = std::filesystem;
 
@@ -50,4 +50,6 @@ private:
     sf::Text imagePreviewLabel;
 
     sf::Vector2f mazePreviewSize;
+
+    std::vector<TextBox> textboxes;
 };

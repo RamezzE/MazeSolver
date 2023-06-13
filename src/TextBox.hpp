@@ -54,13 +54,14 @@ public:
 private:
     sf::RectangleShape border;
     sf::Text text;
+    sf::Font font;
 
     sf::Vector2f position;
     sf::Vector2f origin;
 
-    int textLimit;
+    int textLimit, subsetCounter, maxCharactersDisplayed;
 
-    bool selected, hover;
+    bool selected, hover, validTextEntered;
 
     std::string inputString;
 
@@ -71,6 +72,7 @@ private:
     enum
     {
         BACKSPACE = 8,
+        SPACE = 32,
         PERIOD = 46,
         ZERO = 48,
         NINE = 57,
@@ -87,4 +89,7 @@ private:
     };
 
     bool isMouseOver(TextBox textbox, sf::RenderWindow *window);
+    float getCharacterWidth();
+    int calculateMaxCharactersDisplayed();
+
 };

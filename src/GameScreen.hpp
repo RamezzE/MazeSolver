@@ -53,6 +53,6 @@ private:
 
 	bool resizeMaze, exportMaze;
 
-	Slider speedSlider, thicknessSlider;
-	sf::Text speedLabel, thicknessLabel;
+	std::vector<Slider*> sliders;
+	std::vector<sf::Text> labels;
 };

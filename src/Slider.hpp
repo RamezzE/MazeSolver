@@ -12,7 +12,7 @@ public:
 
     void handleInput(sf::Event event);
     void update(sf::RenderWindow *window);
-    void render(sf::RenderWindow &window);
+    void render(sf::RenderWindow *window);
 
     void setPosition(sf::Vector2f position);
     void setAxisSize(sf::Vector2f size);

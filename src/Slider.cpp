@@ -159,21 +159,21 @@ void Slider::setSliderPercentValue(float newPercentValue)
     }
 }
 
-void Slider::render(sf::RenderWindow &window)
+void Slider::render(sf::RenderWindow* window)
 {
-    window.draw(axis);
+    window->draw(axis);
 
     if ((int)sliderValue != minValue)
-        window.draw(returnText(position.x - 10, position.y + 5, std::to_string(minValue), characterSize));
+        window->draw(returnText(position.x - 10, position.y + 5, std::to_string(minValue), characterSize));
 
     //round up
 
     if ((int)ceil(sliderValue) != maxValue)
-        window.draw(returnText(position.x + axisSize.x - 10, position.y + 5, std::to_string(maxValue), characterSize));
+        window->draw(returnText(position.x + axisSize.x - 10, position.y + 5, std::to_string(maxValue), characterSize));
 
-    window.draw(progress);
-    window.draw(handle);
-    window.draw(returnText(handle.getPosition().x - handleSize.x, handle.getPosition().y - handleSize.y, std::to_string((int)sliderValue), characterSize));
+    window->draw(progress);
+    window->draw(handle);
+    window->draw(returnText(handle.getPosition().x - handleSize.x, handle.getPosition().y - handleSize.y, std::to_string((int)sliderValue), characterSize));
 }
 
 bool Slider::isMouseOver(sf::RectangleShape sprite, sf::RenderWindow *window)

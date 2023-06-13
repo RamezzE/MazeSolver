@@ -6,10 +6,16 @@ GameScreen::GameScreen(Game *myGame)
 {
     this->game = myGame;
 
-    speedSlider.create(0, 11);
-    speedSlider.setSliderValue(1);
+    for (int i = 0; i < 2; i++)
+    {
+        sliders.push_back(new Slider());
+        sliders[i]->setColors(sf::Color(21, 23, 44), sf::Color::Magenta);
+    }
 
-    thicknessSlider.create(1, 7);
+    sliders[0]->create(0, 11);
+    sliders[0]->setSliderValue(1);
+
+    sliders[1]->create(1, 7);
 
     font.loadFromFile(FONT_PATH);
 
@@ -48,16 +54,16 @@ GameScreen::GameScreen(Game *myGame)
     myButtons[3].setText("  Choose\nStart/End", sf::Color::Magenta);
     myButtons[4].setText("  Export\nas Image", sf::Color::Magenta);
 
-    speedSlider.setColors(sf::Color(21, 23, 44), sf::Color::Magenta);
-    thicknessSlider.setColors(sf::Color(21, 23, 44), sf::Color::Magenta);
+    for (int i = 0; i < 2; i++)
+    {
+        labels.push_back(sf::Text());
+        labels[i].setFont(font);
+        labels[i].setFillColor(sf::Color::Magenta);
+    }
 
-    speedLabel.setString("Speed: ");
-    speedLabel.setFont(font);
-    speedLabel.setFillColor(sf::Color::Magenta);
+    labels[0].setString("Speed: ");
 
-    thicknessLabel.setString("Thickness: ");
-    thicknessLabel.setFont(font);
-    thicknessLabel.setFillColor(sf::Color::Magenta);
+    labels[1].setString("Thickness: ");
 
     exportMaze = false;
     exportImageScreen = new ExportImageScreen(game, maze);
@@ -78,8 +84,9 @@ void GameScreen::init()
     for (int i = 0; i < 5; i++)
         myButtons[i].setCharacterSize(game->height / 20);
 
-    thicknessLabel.setCharacterSize(game->height / 20);
-    speedLabel.setCharacterSize(game->height / 20);
+    for (int i = 0; i < 2; i++)
+        labels[i].setCharacterSize(game->height / 20);
+
     textBoxes[0].setTextFormat(sf::Color::Magenta, game->height / 20);
     textBoxes[0].setSize(sf::Vector2f(textBoxes[0].getCharacterSize() * 1.2, textBoxes[0].getCharacterSize()));
 
@@ -95,18 +102,19 @@ void GameScreen::init()
 
     textBoxes[0].setPosition(sf::Vector2f(myButtons[2].getGlobalBounds().left + myButtons[2].getGlobalBounds().width / 2 - textBoxes[0].getGlobalBounds().width / 2, game->height * 4 / 8));
 
-    speedSlider.setAxisSize(sf::Vector2f(game->width / 5, game->height / 80));
-    speedSlider.setHandleSize(sf::Vector2f(game->height / 30, game->height / 20));
-    speedSlider.setPosition(sf::Vector2f(textBoxes[0].getGlobalBounds().width / 4 + (pos.x + size.x) + (game->width - (pos.x + size.x)) / 4 - speedSlider.getGlobalBounds().width / 2, pos.y * 2.8));
-    speedSlider.setCharacterSize(game->height / 50);
 
-    thicknessSlider.setAxisSize(sf::Vector2f(game->width / 5, game->height / 80));
-    thicknessSlider.setHandleSize(sf::Vector2f(game->height / 30, game->height / 20));
-    thicknessSlider.setPosition(sf::Vector2f(textBoxes[0].getGlobalBounds().width / 4 + (pos.x + size.x) + (game->width - (pos.x + size.x)) / 4 - speedSlider.getGlobalBounds().width / 2, pos.y * 7));
-    thicknessSlider.setCharacterSize(game->height / 50);
+    for (int i = 0;i<sliders.size();i++) {
+        sliders[i]->setAxisSize(sf::Vector2f(game->width / 5, game->height / 80));
+        sliders[i]->setHandleSize(sf::Vector2f(game->height / 30, game->height / 20));
+        sliders[i]->setCharacterSize(game->height / 50);
+    }
 
-    speedLabel.setPosition(sf::Vector2f(speedSlider.getGlobalBounds().left, pos.y / 2));
-    thicknessLabel.setPosition(sf::Vector2f(thicknessSlider.getGlobalBounds().left, pos.y * 4.8));
+    sliders[0]->setPosition(sf::Vector2f(textBoxes[0].getGlobalBounds().width / 4 + (pos.x + size.x) + (game->width - (pos.x + size.x)) / 4 - sliders[0]->getGlobalBounds().width / 2, pos.y * 2.8));
+
+    sliders[1]->setPosition(sf::Vector2f(textBoxes[0].getGlobalBounds().width / 4 + (pos.x + size.x) + (game->width - (pos.x + size.x)) / 4 - sliders[0]->getGlobalBounds().width / 2, pos.y * 6));
+
+    labels[0].setPosition(sf::Vector2f(sliders[0]->getGlobalBounds().left, pos.y / 2));
+    labels[1].setPosition(sf::Vector2f(sliders[1]->getGlobalBounds().left, pos.y * 3.8));
 }
 
 void GameScreen::handleInput()
@@ -118,8 +126,8 @@ void GameScreen::handleInput()
         for (int i = 0; i < textBoxes.size(); i++)
             textBoxes[i].handleInput(event);
 
-        speedSlider.handleInput(event);
-        thicknessSlider.handleInput(event);
+        for (int i = 0; i < sliders.size(); i++)
+            sliders[i]->handleInput(event);
 
         if (event.type == sf::Event::Resized)
         {
@@ -163,8 +171,9 @@ void GameScreen::handleInput()
 
 void GameScreen::update(const float dt)
 {
+
     maze->pause = false;
-    switch ((int)speedSlider.getSliderValue())
+    switch ((int)sliders[0]->getSliderValue())
     {
     case 0:
         maze->pause = true;
@@ -207,28 +216,29 @@ void GameScreen::update(const float dt)
         break;
     }
 
-    switch((int)thicknessSlider.getSliderValue()) {
-        case 1:
-            maze->setWallThickness(2);
-            break;
-        case 2:
-            maze->setWallThickness(4);
-            break;
-        case 3:
-            maze->setWallThickness(8);
-            break;
-        case 4:
-            maze->setWallThickness(16);
-            break;
-        case 5:
-            maze->setWallThickness(24);
-            break;
-        case 6:
-            maze->setWallThickness(32);
-            break;
-        case 7:
-            maze->setWallThickness(40);
-            break;
+    switch ((int)sliders[1]->getSliderValue())
+    {
+    case 1:
+        maze->setWallThickness(2);
+        break;
+    case 2:
+        maze->setWallThickness(4);
+        break;
+    case 3:
+        maze->setWallThickness(8);
+        break;
+    case 4:
+        maze->setWallThickness(16);
+        break;
+    case 5:
+        maze->setWallThickness(24);
+        break;
+    case 6:
+        maze->setWallThickness(32);
+        break;
+    case 7:
+        maze->setWallThickness(40);
+        break;
     }
 
     for (int i = 0; i < textBoxes.size(); i++)
@@ -237,8 +247,8 @@ void GameScreen::update(const float dt)
     for (int i = 0; i < myButtons.size(); i++)
         myButtons[i].update(game->window);
 
-    speedSlider.update(game->window);
-    thicknessSlider.update(game->window);
+    for (int i = 0; i < sliders.size(); i++)
+        sliders[i]->update(game->window);
 
     maze->update(game->window);
 
@@ -308,11 +318,11 @@ void GameScreen::draw()
 
     maze->render(game->window);
 
-    speedSlider.render(*(game->window));
-    game->window->draw(speedLabel);
+    for (int i = 0; i < 2; i++)
+        sliders[i]->render(game->window);
 
-    thicknessSlider.render(*(game->window));
-    game->window->draw(thicknessLabel);
+    for (int i = 0; i < labels.size(); i++)
+        game->window->draw(labels[i]);
 }
 
 void GameScreen::checkResize(sf::Event event)
