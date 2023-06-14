@@ -154,8 +154,8 @@ void GameScreen::init()
         notesText[1].move(19.5, 0);
         notesBackground[1].move(19.5, 0);
 
-        for (int i = 0;i<2;i++)
-            notesBackground[i].setSize(sf::Vector2f(notesBackground[i].getSize().x*0.9, notesBackground[i].getSize().y));
+        for (int i = 0; i < 2; i++)
+            notesBackground[i].setSize(sf::Vector2f(notesBackground[i].getSize().x * 0.9, notesBackground[i].getSize().y));
     }
 }
 
@@ -254,16 +254,16 @@ void GameScreen::update(const float dt)
     switch ((int)sliders[1]->getSliderValue())
     {
     case 1:
-        maze->setWallThickness(2);
+        maze->setWallThicknessFactor(1);
         break;
     case 2:
-        maze->setWallThickness(4);
+        maze->setWallThicknessFactor(2);
         break;
     case 3:
-        maze->setWallThickness(8);
+        maze->setWallThicknessFactor(4);
         break;
     case 4:
-        maze->setWallThickness(16);
+        maze->setWallThicknessFactor(8);
         break;
     }
 
@@ -401,8 +401,8 @@ void GameScreen::checkResize(sf::Event event)
     if (event.size.height == sf::VideoMode::getDesktopMode().height || event.size.width == sf::VideoMode::getDesktopMode().width)
     {
         if (!event.size.height == sf::VideoMode::getDesktopMode().height || !event.size.width == sf::VideoMode::getDesktopMode().width)
-            game->window->setPosition(sf::Vector2i(0,0));
-        
+            game->window->setPosition(sf::Vector2i(0, 0));
+
         game->window->setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
         maximized = true;
     }

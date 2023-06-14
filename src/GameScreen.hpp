@@ -30,7 +30,7 @@ public:
 	void draw();
 
 	void init();
-
+	
 private:
 	void solveMaze();
 	void checkResize(sf::Event event);
@@ -58,5 +58,6 @@ private:
 
 	std::vector<Slider*> sliders;
 	std::vector<sf::Text> labels;
+
 
 };

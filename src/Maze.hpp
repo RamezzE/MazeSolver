@@ -24,12 +24,15 @@ public:
     void setPosition(sf::Vector2f position);
     void setColors(sf::Color tileColor, sf::Color wallColor, sf::Color outlineColor);
     void setSpeedFactor(int factor);
-    void setWallThickness(float thickness);
+    void setWallThicknessFactor(float factor);
 
     void handleInput(sf::Event event);
     void update(sf::RenderWindow *window);
     void render(sf::RenderWindow* window);
     void render(sf::RenderTexture* window);
+
+    float getWallThicknessFactor();
+    float getWallThicknessScale();
     
     bool threadRunning, choosingStartOrEnd, mazeGenerated, pause;
 
@@ -70,5 +73,7 @@ private:
     void neighboursUnvisited(std::vector<std::vector<int>> &vec, int i, int j);
     
     bool isMouseOver(Tile tile, sf::RenderWindow *window);
+
+    float thicknessScale, thicknessFactor;
 
 };

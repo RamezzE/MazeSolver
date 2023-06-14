@@ -7,6 +7,8 @@ ExportImageScreen::ExportImageScreen(Game *myGame, Maze *maze)
     bgImg.loadFromFile(BACKGROUND_PATH);
     background.setTexture(&bgImg);
 
+    gameScreen = dynamic_cast<GameScreen *>(game->getPreviousScreen());
+
     imagesFolder = "Exported Maze Images/";
 
     font.loadFromFile(FONT_PATH);
@@ -153,7 +155,7 @@ void ExportImageScreen::update(const float dt)
     else if (myButtons[1].isDoAction())
     {
         maze->pause = false;
-        dynamic_cast<GameScreen *>(game->getPreviousScreen())->init();
+        gameScreen->init();
         game->previousScreen();
         myButtons[1].didAction();
     }
@@ -182,9 +184,10 @@ void ExportImageScreen::update(const float dt)
 
         myButtons[2].didAction();
     }
-    else if (myButtons[3].isDoAction()) {
+    else if (myButtons[3].isDoAction())
+    {
 
-        //open folder in current directory. folder name is variable 
+        // open folder in current directory. folder name is variable
         std::string command = "cd " + imagesFolder + " && explorer .";
         system(command.c_str());
 
@@ -218,8 +221,8 @@ void ExportImageScreen::previewMaze()
     setPreviewColor(tempMaze);
 
     tempMaze.resize(size);
-
     tempMaze.setPosition(sf::Vector2f(0, 0));
+    tempMaze.setWallThicknessFactor(tempMaze.getWallThicknessFactor());
 
     mazeRenderTexture.create(size.x, size.y);
     mazeRenderTexture.clear(sf::Color::White);
@@ -268,6 +271,7 @@ void ExportImageScreen::exportMazeToPNG()
 
     tempMaze.resize(sf::Vector2f(width, height));
     tempMaze.setPosition(sf::Vector2f(0, 0));
+    tempMaze.setWallThicknessFactor(tempMaze.getWallThicknessFactor());
 
     sf::RenderTexture texture;
     texture.create(width, height);

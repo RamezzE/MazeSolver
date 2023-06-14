@@ -29,6 +29,9 @@ Maze::Maze(int row, int col, sf::Vector2f size, sf::Vector2f position)
     wrongPathColor = sf::Color(23, 28, 116);
     playerColor = sf::Color(23, 165, 229);
 
+    thicknessScale = 0.0015f;
+    thicknessFactor = 1;
+
     resizeGrid(row, col);
 
     footprints[endX][endY].setFillColor(sf::Color::White);
@@ -129,8 +132,13 @@ void Maze::setSpeedFactor(int factor)
     this->speedFactor = factor;
 }
 
-void Maze::setWallThickness(float thickness)
-{
+void Maze::setWallThicknessFactor(float factor)
+{   
+    if (factor < 0.5f)
+        factor = 0.5f;
+    
+    thicknessFactor = factor;
+    float thickness = thicknessFactor*thicknessScale*mazeH;
     for (int i = 0; i < maze.size(); i++)
         for (int j = 0; j < maze[i].size(); j++)
             maze[i][j].setWallThickness(thickness);
@@ -159,7 +167,8 @@ void Maze::handleInput(sf::Event event)
 {
     if (event.type == sf::Event::MouseButtonPressed)
         if (event.mouseButton.button == sf::Mouse::Left)
-            if (choosingStartOrEnd) {
+            if (choosingStartOrEnd)
+            {
                 mouseClicked = true;
                 return;
             }
@@ -459,7 +468,7 @@ void Maze::solveMaze_helper(int i, int j, int endX, int endY) // i & j are start
         }
         if (!shortestPathAlgorithm)
             reachedEnd = true;
-        
+
         showPlayer(i, j);
         backTrackCheck(true, i, j);
         return;
@@ -577,4 +586,12 @@ void Maze::backTrackCheck(bool backTrack, int i, int j)
 bool Maze::isMouseOver(Tile tile, sf::RenderWindow *window)
 {
     return tile.getGlobalBounds().contains(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y);
+}
+
+float Maze::getWallThicknessFactor() {
+    return thicknessFactor;
+}
+
+float Maze::getWallThicknessScale() {
+    return thicknessScale;
 }

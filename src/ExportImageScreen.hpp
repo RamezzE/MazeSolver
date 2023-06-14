@@ -37,6 +37,8 @@ private:
     Game *game;
     Maze *maze;
 
+    GameScreen* gameScreen;
+
     sf::Font font;
 
     sf::RectangleShape background;
