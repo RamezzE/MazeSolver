@@ -93,20 +93,6 @@ void TextBox::handleInput(sf::Event event)
         validTextEntered = true;
         text.setString(inputString);
     }
-    // else if (event.type == sf::Event::KeyPressed) {
-    //     if (event.key.code == sf::Keyboard::Left) {
-    //         if (text.getGlobalBounds().left + text.getGlobalBounds().width > border.getGlobalBounds().left + border.getGlobalBounds().width) {
-    //             text.move(-1, 0);
-    //             text.setString(inputString.substr(1));
-    //         }
-    //     }
-    //     else if (event.key.code == sf::Keyboard::Right) {
-    //         if (text.getString() != inputString) {
-    //             text.move(1, 0);
-    //             text.setString(inputString.substr(1));
-    //         }
-    //     }
-    // }
 }
 
 void TextBox::update(sf::RenderWindow *window)
@@ -135,18 +121,20 @@ void TextBox::update(sf::RenderWindow *window)
         return;
     }
 
+    if (selected)
+        border.setOutlineColor(borderSelectedColor);
+
     if (isMouseOver(*this, window))
     {
         hover = true;
-        border.setOutlineColor(borderHoverColor);
+        if (!selected)
+            border.setOutlineColor(borderHoverColor);
         return;
     }
 
     hover = false;
-    border.setOutlineColor(borderColor);
-
-    if (selected)
-        border.setOutlineColor(borderSelectedColor);
+    if (!selected)
+        border.setOutlineColor(borderColor);
 }
 
 void TextBox::draw(sf::RenderWindow(*window))

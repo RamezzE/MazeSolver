@@ -155,7 +155,7 @@ void ExportImageScreen::update(const float dt)
     else if (myButtons[1].isDoAction())
     {
         maze->pause = false;
-        gameScreen->init();
+        dynamic_cast<GameScreen *>(game->getPreviousScreen())->init();
         game->previousScreen();
         myButtons[1].didAction();
     }
