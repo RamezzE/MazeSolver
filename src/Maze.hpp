@@ -26,7 +26,7 @@ public:
     void setSpeedFactor(int factor);
     void setWallThicknessFactor(float factor);
 
-    void handleInput(sf::Event event);
+    void handleInput(sf::Event event,sf::RenderWindow *window);
     void update(sf::RenderWindow *window);
     void render(sf::RenderWindow* window);
     void render(sf::RenderTexture* window);
@@ -73,6 +73,7 @@ private:
     void neighboursUnvisited(std::vector<std::vector<int>> &vec, int i, int j);
     
     bool isMouseOver(Tile tile, sf::RenderWindow *window);
+    bool isMouseOver(sf::RectangleShape shape, sf::RenderWindow *window);
 
     float thicknessScale, thicknessFactor;
 

@@ -194,7 +194,7 @@ void GameScreen::handleInput()
         for (int i = 0; i < checkboxes.size(); i++)
             checkboxes[i].handleInput(event);
 
-        maze->handleInput(event);
+        maze->handleInput(event,game->window);
 
         if (event.type == sf::Event::Resized)
         {
@@ -310,6 +310,11 @@ void GameScreen::update(const float dt)
         notesText[1].setFillColor(sf::Color::Magenta);
     else 
         notesText[1].setFillColor(notesText[0].getFillColor());
+
+    if (maze->threadRunning || maze->choosingStartOrEnd)
+        checkboxes[0].setEnabled(false);
+    else 
+        checkboxes[0].setEnabled(true);
 
     if (maze->threadRunning || maze->choosingStartOrEnd || maze->editMode)
     {

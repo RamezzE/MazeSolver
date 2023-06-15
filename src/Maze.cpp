@@ -133,12 +133,12 @@ void Maze::setSpeedFactor(int factor)
 }
 
 void Maze::setWallThicknessFactor(float factor)
-{   
+{
     if (factor < 0.5f)
         factor = 0.5f;
-    
+
     thicknessFactor = factor;
-    float thickness = thicknessFactor*thicknessScale*mazeH;
+    float thickness = thicknessFactor * thicknessScale * mazeH;
     for (int i = 0; i < maze.size(); i++)
         for (int j = 0; j < maze[i].size(); j++)
             maze[i][j].setWallThickness(thickness);
@@ -163,17 +163,21 @@ void Maze::resizeGrid(int row, int col)
     clearMaze();
 }
 
-void Maze::handleInput(sf::Event event)
+void Maze::handleInput(sf::Event event, sf::RenderWindow *window)
 {
     if (event.type == sf::Event::MouseButtonPressed)
-        if (event.mouseButton.button == sf::Mouse::Left)
-            if (choosingStartOrEnd)
-            {
+        // if (event.mouseButton.button == sf::Mouse::Left)
+            if (isMouseOver(mazeBorder, window))
                 mouseClicked = true;
-                return;
-            }
+
+
+    if (event.type == sf::Event::MouseButtonReleased)
+        mouseClicked = false;
 
     if (!editMode)
+        return;
+
+    if (!mouseClicked)
         return;
 
     for (int i = 0; i < maze.size(); i++)
@@ -459,8 +463,8 @@ void Maze::solveMaze_helper(int i, int j, int endX, int endY) // i & j are start
     if (!shortestPathAlgorithm)
         if (reachedEnd)
             return;
-    else if (steps > minSteps)
-        return;
+        else if (steps > minSteps)
+            return;
 
     if (visited[endX][endY]) // end point
     {
@@ -593,10 +597,17 @@ bool Maze::isMouseOver(Tile tile, sf::RenderWindow *window)
     return tile.getGlobalBounds().contains(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y);
 }
 
-float Maze::getWallThicknessFactor() {
+bool Maze::isMouseOver(sf::RectangleShape shape, sf::RenderWindow *window)
+{
+    return shape.getGlobalBounds().contains(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y);
+}
+
+float Maze::getWallThicknessFactor()
+{
     return thicknessFactor;
 }
 
-float Maze::getWallThicknessScale() {
+float Maze::getWallThicknessScale()
+{
     return thicknessScale;
 }
