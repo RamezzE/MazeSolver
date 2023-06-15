@@ -2,11 +2,14 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "Maze.hpp"
 
+class Maze;
 class Tile
 {
 public:
     Tile();
+    Tile(Maze* maze);
 
     void setPosition(sf::Vector2f position);
     void setSize(sf::Vector2f size);
@@ -36,6 +39,7 @@ public:
     void renderLines(sf::RenderTexture *window);
 
 private:
+    Maze* maze;
     sf::RectangleShape tile;
 
     bool wall[2]; // top, , right

@@ -46,7 +46,7 @@ void Maze::init()
     for (int i = 0; i < row; i++)
         for (int j = 0; j < col; j++)
         {
-            maze[i][j] = Tile();
+            maze[i][j] = Tile(this);
             maze[i][j].setSize(sf::Vector2f(mazeW / col, mazeH / row));
         }
 
@@ -166,19 +166,11 @@ void Maze::resizeGrid(int row, int col)
 void Maze::handleInput(sf::Event event, sf::RenderWindow *window)
 {
     if (event.type == sf::Event::MouseButtonPressed)
-        // if (event.mouseButton.button == sf::Mouse::Left)
-            if (isMouseOver(mazeBorder, window))
-                mouseClicked = true;
-
+        if (isMouseOver(mazeBorder, window))
+            mouseClicked = true;
 
     if (event.type == sf::Event::MouseButtonReleased)
         mouseClicked = false;
-
-    if (!editMode)
-        return;
-
-    if (!mouseClicked)
-        return;
 
     for (int i = 0; i < maze.size(); i++)
         for (int j = 0; j < maze[i].size(); j++)
@@ -192,7 +184,7 @@ void Maze::update(sf::RenderWindow *window)
         if (!mouseClicked)
             return;
 
-        mouseClicked = false;
+        mouseClicked = editMode = false;
 
         if (mouseClickCounter == 0)
         {
@@ -237,9 +229,7 @@ void Maze::update(sf::RenderWindow *window)
 
     for (int i = 0; i < maze.size(); i++)
         for (int j = 0; j < maze[i].size(); j++)
-        {
             maze[i][j].update(window);
-        }
 }
 
 void Maze::render(sf::RenderWindow *window)
@@ -448,6 +438,9 @@ void Maze::solveMaze()
             else
                 footprints[x][y].setFillColor(sf::Color::Transparent);
 
+    if (footprints[endX][endY].getFillColor() == sf::Color::Transparent)
+        footprints[endX][endY].setFillColor(sf::Color::White);
+
     std::cout << "Done" << std::endl;
     threadRunning = false;
 }
@@ -561,6 +554,9 @@ void Maze::findShortestPath()
                 footprints[x][y].setFillColor(sf::Color(0, 255, 0, 255));
             else
                 footprints[x][y].setFillColor(sf::Color::Transparent);
+
+    if (footprints[endX][endY].getFillColor() == sf::Color::Transparent)
+        footprints[endX][endY].setFillColor(sf::Color::White);
 
     std::cout << "Done" << std::endl;
     threadRunning = false;

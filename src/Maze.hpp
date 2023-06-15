@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <cstdlib>
 
+class Tile;
 class Maze
 {
 public:
@@ -34,7 +35,7 @@ public:
     float getWallThicknessFactor();
     float getWallThicknessScale();
     
-    bool threadRunning, choosingStartOrEnd, mazeGenerated, editMode, pause;
+    bool threadRunning, choosingStartOrEnd, mazeGenerated, editMode, mouseClicked, pause;
 
     int startX, startY, endX, endY;
 
@@ -46,7 +47,7 @@ private:
     float sleepTime;
     int speedFactor, mouseClickCounter;
 
-    bool reachedEnd, mouseClicked, shortestPathAlgorithm;
+    bool reachedEnd, shortestPathAlgorithm;
 
     std::vector<std::vector<Tile>> maze;
     std::vector<std::vector<sf::RectangleShape>> footprints;

@@ -1,7 +1,12 @@
 #include "Tile.hpp"
 
-Tile::Tile()
+Tile::Tile() {
+    Tile(nullptr);
+}
+
+Tile::Tile(Maze* maze)
 {
+    this->maze = maze;
     color = sf::Color(224, 223, 224);
 
     tile.setFillColor(color);
@@ -108,6 +113,9 @@ void Tile::update(sf::RenderWindow *window)
 
     if (mouseOver && mouseIsPressed)
     {
+        if (!maze->editMode || !maze->mouseClicked || maze->choosingStartOrEnd)
+            return;
+        
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
         {
             if (!changed)

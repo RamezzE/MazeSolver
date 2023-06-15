@@ -379,7 +379,11 @@ void GameScreen::update(const float dt)
 
 void GameScreen::draw()
 {
+    
     game->window->draw(background);
+    sf::RectangleShape x(background);
+    x.setFillColor(sf::Color::White);
+    game->window->draw(x);
 
     for (int i = 0; i < notesBackground.size(); i++)
         game->window->draw(notesBackground[i]);
