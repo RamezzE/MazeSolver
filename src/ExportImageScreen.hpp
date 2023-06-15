@@ -12,6 +12,7 @@
 #include "GameScreen.hpp"
 #include "Button.hpp"
 #include "TextBox.hpp"
+#include "CheckBox.hpp"
 
 namespace fs = std::filesystem;
 
@@ -56,6 +57,7 @@ private:
     sf::Vector2f mazePreviewSize;
 
     std::vector<TextBox> textboxes;
+    std::vector<CheckBox> checkboxes;
     std::vector<sf::Text> labels;
 
     std::string imagesFolder;

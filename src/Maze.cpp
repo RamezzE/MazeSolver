@@ -16,7 +16,7 @@ Maze::Maze(int row, int col, sf::Vector2f size, sf::Vector2f position)
 
     speedFactor = 1;
 
-    threadRunning = choosingStartOrEnd = mazeGenerated = pause = false;
+    threadRunning = choosingStartOrEnd = mazeGenerated = editMode = pause = false;
 
     startX = startY = 0;
 
@@ -172,6 +172,9 @@ void Maze::handleInput(sf::Event event)
                 mouseClicked = true;
                 return;
             }
+
+    if (!editMode)
+        return;
 
     for (int i = 0; i < maze.size(); i++)
         for (int j = 0; j < maze[i].size(); j++)
@@ -456,6 +459,8 @@ void Maze::solveMaze_helper(int i, int j, int endX, int endY) // i & j are start
     if (!shortestPathAlgorithm)
         if (reachedEnd)
             return;
+    else if (steps > minSteps)
+        return;
 
     if (visited[endX][endY]) // end point
     {

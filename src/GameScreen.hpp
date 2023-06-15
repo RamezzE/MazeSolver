@@ -15,6 +15,7 @@
 #include "Button.hpp"
 #include "TextBox.hpp"
 #include "Slider.hpp"
+#include "CheckBox.hpp"
 
 namespace fs = std::filesystem;
 
@@ -30,7 +31,7 @@ public:
 	void draw();
 
 	void init();
-	
+
 private:
 	void solveMaze();
 	void checkResize(sf::Event event);
@@ -41,8 +42,7 @@ private:
 
 	ExportImageScreen *exportImageScreen;
 
-	std::vector<Button> myButtons;
-	std::vector<TextBox> textBoxes;
+	
 
 	sf::Font font;
 
@@ -58,6 +58,8 @@ private:
 
 	std::vector<Slider*> sliders;
 	std::vector<sf::Text> labels;
-
+	std::vector<Button> myButtons;
+	std::vector<TextBox> textBoxes;
+	std::vector<CheckBox> checkboxes;
 
 };

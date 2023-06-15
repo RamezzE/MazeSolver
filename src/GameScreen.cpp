@@ -28,15 +28,24 @@ GameScreen::GameScreen(Game *myGame)
         myButtons[i].setBackgroundColor(sf::Color(12, 13, 23, 255));
     }
 
-    textBoxes.push_back(TextBox(font));
+    for (int i = 0; i < 1; i++)
+    {
+        textBoxes.push_back(TextBox(font));
+        textBoxes[0].allowNumberOnly();
+        textBoxes[0].setTextFormat(sf::Color::Magenta, 40);
+        textBoxes[0].setBackgroundColor(sf::Color(12, 13, 23, 255));
+        textBoxes[0].setBorder(3, sf::Color(12, 13, 23, 255), sf::Color(173, 172, 173), sf::Color::Magenta);
+    }
 
-    textBoxes[0].setString(std::to_string(N));
     textBoxes[0].setTextLimit(2);
-    textBoxes[0].allowNumberOnly();
+    textBoxes[0].setString(std::to_string(N));
 
-    textBoxes[0].setTextFormat(sf::Color::Magenta, 40);
-    textBoxes[0].setBackgroundColor(sf::Color(12, 13, 23, 255));
-    textBoxes[0].setBorder(3, sf::Color(12, 13, 23, 255), sf::Color(173, 172, 173), sf::Color::Magenta);
+    for (int i = 0; i < 1; i++)
+    {
+        checkboxes.push_back(CheckBox());
+        checkboxes[i].setBackgroundColor(sf::Color(12, 13, 23, 255));
+        checkboxes[i].setCheckedColor(sf::Color::Magenta);
+    }
 
     bgImg.loadFromFile(BACKGROUND_PATH);
     background.setTexture(&bgImg);
@@ -56,7 +65,7 @@ GameScreen::GameScreen(Game *myGame)
     myButtons[4].setText("  Export\nas Image", sf::Color::Magenta);
     myButtons[5].setText("Shortest Path", sf::Color::Magenta);
 
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 3; i++)
     {
         labels.push_back(sf::Text());
         labels[i].setFont(font);
@@ -66,8 +75,8 @@ GameScreen::GameScreen(Game *myGame)
     }
 
     labels[0].setString("Speed: ");
-
     labels[1].setString("Thickness: ");
+    labels[2].setString("Toggle Edit\n     Mode");
 
     exportMaze = maximized = false;
     exportImageScreen = new ExportImageScreen(game, maze);
@@ -84,9 +93,8 @@ GameScreen::GameScreen(Game *myGame)
         notesText[i].setFont(font);
         notesText[i].setFillColor(sf::Color(255, 255, 255, 128));
     }
-
-    notesText[0].setString("N.B.\nOn any cell:\nLeft click: toggle top wall.\nRight click: toggle right wall.\n\nSpeed 0 -> pause simulation.\nMax Speed -> Instant effect.");
-    notesText[1].setString("N.B.\nGenerate Maze: generates a\nmaze with only 1 solution\ninitially.\n\nSolve Maze: stops at 1st\nsolution found.");
+    notesText[0].setString("N.B.\nGenerate Maze: generates a\nmaze with only 1 solution\ninitially.\n\nSolve Maze: stops at 1st\nsolution found.");
+    notesText[1].setString("N.B.\nOn any cell in Edit Mode:\nLeft click: toggle top wall.\nRight click: toggle right wall.\n\nSpeed 0 -> pause simulation.\nMax Speed -> Instant effect.");
 
     init();
 }
@@ -107,6 +115,8 @@ void GameScreen::init()
 
     for (int i = 0; i < 2; i++)
         labels[i].setCharacterSize(game->height / 20);
+
+    labels[2].setCharacterSize(game->height / 30);
 
     for (int i = 0; i < 2; i++)
         notesText[i].setCharacterSize(game->height / 30);
@@ -157,6 +167,13 @@ void GameScreen::init()
         for (int i = 0; i < 2; i++)
             notesBackground[i].setSize(sf::Vector2f(notesBackground[i].getSize().x * 0.9, notesBackground[i].getSize().y));
     }
+
+    for (int i = 0; i < checkboxes.size(); i++)
+    {
+        checkboxes[i].setSize(sf::Vector2f(game->height / 20, game->height / 20));
+        checkboxes[i].setPosition(sf::Vector2f(myButtons[3].getPosition().x - myButtons[3].getGlobalBounds().width/2 + checkboxes[i].getSize().x/2, myButtons[3].getPosition().y + checkboxes[i].getSize().y * 2 * (i + 1)));
+    }
+    labels[2].setPosition(checkboxes[0].getPosition().x + checkboxes[0].getSize().x * 0.8, checkboxes[0].getPosition().y - checkboxes[0].getSize().y/1.3);
 }
 
 void GameScreen::handleInput()
@@ -173,6 +190,9 @@ void GameScreen::handleInput()
 
         for (int i = 0; i < myButtons.size(); i++)
             myButtons[i].handleInput(event);
+
+        for (int i = 0; i < checkboxes.size(); i++)
+            checkboxes[i].handleInput(event);
 
         maze->handleInput(event);
 
@@ -276,9 +296,22 @@ void GameScreen::update(const float dt)
     for (int i = 0; i < sliders.size(); i++)
         sliders[i]->update(game->window);
 
+    for (int i = 0; i < checkboxes.size(); i++)
+        checkboxes[i].update(game->window);
+
     maze->update(game->window);
 
-    if (maze->threadRunning || maze->choosingStartOrEnd)
+    if (checkboxes[0].isChecked())
+        maze->editMode = true;
+    else 
+        maze->editMode = false;
+
+    if (maze->editMode)
+        notesText[1].setFillColor(sf::Color::Magenta);
+    else 
+        notesText[1].setFillColor(notesText[0].getFillColor());
+
+    if (maze->threadRunning || maze->choosingStartOrEnd || maze->editMode)
     {
         for (int i = 0; i < myButtons.size(); i++)
             myButtons[i].setEnabled(false);
@@ -362,6 +395,9 @@ void GameScreen::draw()
 
     for (int i = 0; i < labels.size(); i++)
         game->window->draw(labels[i]);
+
+    for (int i = 0; i < checkboxes.size(); i++)
+        checkboxes[i].render(game->window);
 }
 
 void GameScreen::checkResize(sf::Event event)

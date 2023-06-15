@@ -41,6 +41,12 @@ ExportImageScreen::ExportImageScreen(Game *myGame, Maze *maze)
         textboxes[i].setString("2000");
     }
 
+    for (int i = 0;i<1;i++) {
+        checkboxes.push_back(CheckBox());
+        checkboxes[i].setBackgroundColor(sf::Color(12, 13, 23, 255));
+        checkboxes[i].setCheckedColor(sf::Color::White);
+    }
+
     for (int i = 0; i < 4; i++)
     {
         myButtons.push_back(Button());
@@ -110,6 +116,11 @@ void ExportImageScreen::init()
 
     myButtons[2].setPosition(sf::Vector2f(game->width / 1.5 + myButtons[2].getGlobalBounds().width / 2, textboxes[0].getPosition().y + myButtons[2].getGlobalBounds().height / 2));
     myButtons[3].setPosition(sf::Vector2f(textboxes[0].getPosition().x + myButtons[3].getGlobalBounds().width / 2, myButtons[0].getPosition().y));
+
+    for (int i = 0;i<checkboxes.size();i++) {
+        checkboxes[i].setSize(sf::Vector2f(game->height / 20, game->height / 20));
+        checkboxes[i].setPosition(sf::Vector2f(myButtons[2].getPosition().x - myButtons[2].getGlobalBounds().width/2 + checkboxes[i].getSize().x/2, myButtons[2].getPosition().y + checkboxes[i].getSize().y * (i+1) * 2));
+    }
 }
 
 void ExportImageScreen::handleInput()
@@ -122,6 +133,9 @@ void ExportImageScreen::handleInput()
 
         for (int i = 0; i < textboxes.size(); i++)
             textboxes[i].handleInput(event);
+
+        for (int i = 0;i<checkboxes.size();i++)
+            checkboxes[i].handleInput(event);
 
         if (event.type == sf::Event::Closed)
         {
@@ -144,6 +158,9 @@ void ExportImageScreen::update(const float dt)
 
     for (int i = 0; i < textboxes.size(); i++)
         textboxes[i].update(game->window);
+
+    for (int i = 0;i<checkboxes.size();i++)
+        checkboxes[i].update(game->window);
 
     previewMaze();
 
@@ -207,6 +224,9 @@ void ExportImageScreen::draw()
 
     for (int i = 0; i < textboxes.size(); i++)
         textboxes[i].draw(game->window);
+
+    for (int i = 0;i<checkboxes.size();i++)
+        checkboxes[i].render(game->window);
 
     for (int i = 0; i < labels.size(); i++)
         game->window->draw(labels[i]);
