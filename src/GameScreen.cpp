@@ -58,12 +58,12 @@ GameScreen::GameScreen(Game *myGame)
 
     game->window->setPosition(sf::Vector2i(0, 0));
 
-    myButtons[0].setText("  Resize  \n   Maze  ", sf::Color::Magenta);
-    myButtons[1].setText("Generate Maze", sf::Color::Magenta);
+    myButtons[0].setText("Generate Maze", sf::Color::Magenta);
+    myButtons[1].setText("Shortest Path", sf::Color::Magenta);
     myButtons[2].setText("Solve Maze", sf::Color::Magenta);
-    myButtons[3].setText("  Choose\nStart/End", sf::Color::Magenta);
-    myButtons[4].setText("  Export\nas Image", sf::Color::Magenta);
-    myButtons[5].setText("Shortest Path", sf::Color::Magenta);
+    myButtons[3].setText("  Export\nas Image", sf::Color::Magenta);
+    myButtons[4].setText("  Resize  \n   Maze  ", sf::Color::Magenta);
+    myButtons[5].setText("  Choose\nStart/End", sf::Color::Magenta);
 
     for (int i = 0; i < 3; i++)
     {
@@ -93,8 +93,8 @@ GameScreen::GameScreen(Game *myGame)
         notesText[i].setFont(font);
         notesText[i].setFillColor(sf::Color(255, 255, 255, 128));
     }
-    notesText[0].setString("N.B.\nGenerate Maze: generates a\nmaze with only 1 solution\ninitially.\n\nSolve Maze: stops at 1st\nsolution found.");
-    notesText[1].setString("N.B.\nOn any cell in Edit Mode:\nLeft click: toggle top wall.\nRight click: toggle right wall.\n\nSpeed 0 -> pause simulation.\nMax Speed -> Instant effect.");
+    notesText[0].setString("N.B.\nGenerate Maze: generates a\nmaze with only 1 solution\ninitially\n\nSolve Maze: stops at 1st\nsolution found");
+    notesText[1].setString("N.B.\nOn any cell in Edit Mode:\nLeft click: toggle top wall\nRight click: toggle right wall\n\nSpeed 0 -> pause simulation\nMax Speed -> Instant effect");
 
     init();
 }
@@ -115,24 +115,21 @@ void GameScreen::init()
 
     for (int i = 0; i < 2; i++)
         labels[i].setCharacterSize(game->height / 20);
-
     labels[2].setCharacterSize(game->height / 30);
 
     for (int i = 0; i < 2; i++)
         notesText[i].setCharacterSize(game->height / 30);
 
+    for (int i = 0; i < 3; i++)
+        myButtons[i].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 4, game->height * 4 / 10 + myButtons[4].getLocalBounds().height * i * 0.7));
+
     textBoxes[0].setTextFormat(sf::Color::Magenta, game->height / 20);
     textBoxes[0].setSize(sf::Vector2f(textBoxes[0].getCharacterSize() * 1.3, textBoxes[0].getCharacterSize()));
-
-    myButtons[1].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 4, game->height * 4 / 10 + myButtons[0].getLocalBounds().height * (1 - 1) * 0.7));
-    myButtons[5].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 4, game->height * 4 / 10 + myButtons[0].getLocalBounds().height * (2 - 1) * 0.7));
-
-    myButtons[2].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 4, game->height * 4 / 10 + myButtons[0].getLocalBounds().height * (2) * 0.7));
-
-    myButtons[0].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 1.2, game->height * 3.2 / 10));
     textBoxes[0].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 1.2 - textBoxes[0].getGlobalBounds().width / 2, game->height * 1.95 / 10));
-    myButtons[3].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 1.2, game->height * 4.75 / 10));
-    myButtons[4].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 1.2, game->height * 1 / 10));
+
+    myButtons[3].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 1.2, game->height * 1 / 10));
+    myButtons[4].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 1.2, game->height * 3.2 / 10));
+    myButtons[5].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 1.2, game->height * 4.75 / 10));
 
     for (int i = 0; i < sliders.size(); i++)
     {
@@ -141,17 +138,16 @@ void GameScreen::init()
         sliders[i]->setCharacterSize(game->height / 50);
     }
 
-    sliders[0]->setPosition(sf::Vector2f(textBoxes[0].getGlobalBounds().width / 4 + (pos.x + size.x) + (game->width - (pos.x + size.x)) / 4 - sliders[0]->getGlobalBounds().width / 2, pos.y * 2.8));
+    for (int i = 0; i < 2; i++)
+        sliders[i]->setPosition(sf::Vector2f(textBoxes[0].getGlobalBounds().width / 4 + (pos.x + size.x) + (game->width - (pos.x + size.x)) / 4 - sliders[i]->getGlobalBounds().width / 2, pos.y * (i + 1) * 3));
 
-    sliders[1]->setPosition(sf::Vector2f(textBoxes[0].getGlobalBounds().width / 4 + (pos.x + size.x) + (game->width - (pos.x + size.x)) / 4 - sliders[0]->getGlobalBounds().width / 2, pos.y * 6));
-
-    labels[0].setPosition(sf::Vector2f(sliders[0]->getGlobalBounds().left, pos.y / 2));
-    labels[1].setPosition(sf::Vector2f(sliders[1]->getGlobalBounds().left, pos.y * 3.8));
+    for (int i = 0; i < 2; i++)
+        labels[i].setPosition(sf::Vector2f(sliders[i]->getGlobalBounds().left, sliders[i]->getGlobalBounds().top - labels[i].getGlobalBounds().height * 2.5));
 
     for (int i = 0; i < 2; i++)
     {
-        notesBackground[i].setPosition(sf::Vector2f(myButtons[1].getPosition().x - myButtons[1].getGlobalBounds().width / 1.5, game->height * 6.2 / 10));
-        notesBackground[i].setSize(sf::Vector2f((myButtons[0].getGlobalBounds().left - labels[0].getGlobalBounds().left) * 0.74, game->height / 3.37));
+        notesBackground[i].setPosition(sf::Vector2f(myButtons[0].getPosition().x - myButtons[0].getGlobalBounds().width / 1.5, game->height * 6.2 / 10));
+        notesBackground[i].setSize(sf::Vector2f((myButtons[3].getGlobalBounds().left - labels[0].getGlobalBounds().left) * 0.74, game->height / 3.37));
         notesText[i].setPosition(notesBackground[0].getPosition());
     }
 
@@ -171,9 +167,10 @@ void GameScreen::init()
     for (int i = 0; i < checkboxes.size(); i++)
     {
         checkboxes[i].setSize(sf::Vector2f(game->height / 20, game->height / 20));
-        checkboxes[i].setPosition(sf::Vector2f(myButtons[3].getPosition().x - myButtons[3].getGlobalBounds().width/2 + checkboxes[i].getSize().x/2, myButtons[3].getPosition().y + checkboxes[i].getSize().y * 2 * (i + 1)));
+        checkboxes[i].setPosition(sf::Vector2f(myButtons[5].getPosition().x - myButtons[5].getGlobalBounds().width / 2 + checkboxes[i].getSize().x / 2, myButtons[5].getPosition().y + checkboxes[i].getSize().y * 2 * (i + 1)));
     }
-    labels[2].setPosition(checkboxes[0].getPosition().x + checkboxes[0].getSize().x * 0.8, checkboxes[0].getPosition().y - checkboxes[0].getSize().y/1.3);
+
+    labels[2].setPosition(checkboxes[0].getPosition().x + checkboxes[0].getSize().x * 0.8, checkboxes[0].getPosition().y - checkboxes[0].getSize().y / 1.3);
 }
 
 void GameScreen::handleInput()
@@ -194,14 +191,13 @@ void GameScreen::handleInput()
         for (int i = 0; i < checkboxes.size(); i++)
             checkboxes[i].handleInput(event);
 
-        maze->handleInput(event,game->window);
+        maze->handleInput(event, game->window);
 
-        if (event.type == sf::Event::Resized)
-        {
+        if (event.type == sf::Event::Resized) {
             checkResize(event);
-            break;
+            return;
         }
-        // window closes if close button pressed
+
         if (event.type == sf::Event::Closed)
         {
             game->window->close();
@@ -226,7 +222,6 @@ void GameScreen::handleInput()
 
 void GameScreen::update(const float dt)
 {
-
     maze->pause = false;
     switch ((int)sliders[0]->getSliderValue())
     {
@@ -303,51 +298,46 @@ void GameScreen::update(const float dt)
 
     if (checkboxes[0].isChecked())
         maze->editMode = true;
-    else 
+    else
         maze->editMode = false;
 
     if (maze->editMode)
         notesText[1].setFillColor(sf::Color::Magenta);
-    else 
+    else
         notesText[1].setFillColor(notesText[0].getFillColor());
 
     if (maze->threadRunning || maze->choosingStartOrEnd)
         checkboxes[0].setEnabled(false);
-    else 
+    else
         checkboxes[0].setEnabled(true);
 
     if (maze->threadRunning || maze->choosingStartOrEnd || maze->editMode)
     {
         for (int i = 0; i < myButtons.size(); i++)
             myButtons[i].setEnabled(false);
-
-        myButtons[4].setEnabled(true);
         resizeMaze = false;
-        // return;
-    }
-    else
-    {
-        for (int i = 0; i < myButtons.size(); i++)
-            myButtons[i].setEnabled(true);
-
-        if (!maze->mazeGenerated)
-        {
-            myButtons[2].setEnabled(false);
-            myButtons[3].setEnabled(false);
-            myButtons[5].setEnabled(false);
-        }
+        return;
     }
 
-    if (myButtons[0].isDoAction() || resizeMaze)
+    for (int i = 0; i < myButtons.size(); i++)
+        myButtons[i].setEnabled(true);
+
+    if (!maze->mazeGenerated)
     {
-        N = stoi(textBoxes[0].getString());
-        maze->resizeGrid(N, N);
+        myButtons[2].setEnabled(false);
+        myButtons[3].setEnabled(false);
+        myButtons[1].setEnabled(false);
+    }
+
+    if (myButtons[0].isDoAction())
+    {
+        myThreads.push_back(std::thread{&Maze::generateMaze, std::ref(maze)});
+        myThreads.back().detach();
         myButtons[0].didAction();
-        resizeMaze = false;
     }
     else if (myButtons[1].isDoAction())
     {
-        myThreads.push_back(std::thread{&Maze::generateMaze, std::ref(maze)});
+        myThreads.push_back(std::thread{&Maze::findShortestPath, std::ref(maze)});
         myThreads.back().detach();
         myButtons[1].didAction();
     }
@@ -359,31 +349,28 @@ void GameScreen::update(const float dt)
     }
     else if (myButtons[3].isDoAction())
     {
-        maze->choosingStartOrEnd = true;
-        myButtons[3].didAction();
-    }
-    else if (myButtons[4].isDoAction())
-    {
         maze->pause = true;
         exportImageScreen->init();
         game->changeScreen(exportImageScreen);
+        myButtons[3].didAction();
+    }
+    else if (myButtons[4].isDoAction() || resizeMaze)
+    {
+        N = stoi(textBoxes[0].getString());
+        maze->resizeGrid(N, N);
         myButtons[4].didAction();
+        resizeMaze = false;
     }
     else if (myButtons[5].isDoAction())
     {
-        myThreads.push_back(std::thread{&Maze::findShortestPath, std::ref(maze)});
-        myThreads.back().detach();
+        maze->choosingStartOrEnd = true;
         myButtons[5].didAction();
     }
 }
 
 void GameScreen::draw()
 {
-    
     game->window->draw(background);
-    sf::RectangleShape x(background);
-    x.setFillColor(sf::Color::White);
-    game->window->draw(x);
 
     for (int i = 0; i < notesBackground.size(); i++)
         game->window->draw(notesBackground[i]);
@@ -397,9 +384,7 @@ void GameScreen::draw()
     for (int i = 0; i < textBoxes.size(); i++)
         textBoxes[i].draw(game->window);
 
-    maze->render(game->window);
-
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < sliders.size(); i++)
         sliders[i]->render(game->window);
 
     for (int i = 0; i < labels.size(); i++)
@@ -407,12 +392,16 @@ void GameScreen::draw()
 
     for (int i = 0; i < checkboxes.size(); i++)
         checkboxes[i].render(game->window);
+
+    maze->render(game->window);
 }
 
 void GameScreen::checkResize(sf::Event event)
 {
-    sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+    if (event.size.height == game->height && event.size.width == game->width)
+        return;
 
+    sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
     int h = 0, w = 0;
 
     if (sf::VideoMode::getDesktopMode().width == event.size.width || sf::VideoMode::getDesktopMode().height == event.size.height)
@@ -438,8 +427,6 @@ void GameScreen::checkResize(sf::Event event)
         h = w * 9 / 16;
         game->window->setSize(sf::Vector2u(w, h));
     }
-    else if (event.size.height == game->height && event.size.width == game->width)
-        return;
 
     visibleArea = sf::FloatRect(0, 0, w, h);
 

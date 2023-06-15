@@ -91,7 +91,6 @@ void ExportImageScreen::init()
     X.setCharacterSize(game->height / 30);
 
     myButtons[0].setPosition(sf::Vector2f(game->width / 2.0f, game->height / 1.2f));
-
     myButtons[1].setPosition(sf::Vector2f(game->width * 0.05f, game->height * 0.05f));
 
     for (int i = 0; i < textboxes.size(); i++)
@@ -137,16 +136,13 @@ void ExportImageScreen::handleInput()
         for (int i = 0;i<checkboxes.size();i++)
             checkboxes[i].handleInput(event);
 
-        if (event.type == sf::Event::Closed)
-        {
-            game->window->close();
-            return;
-        }
-
-        if (event.type == sf::Event::Resized)
-        {
-            checkResize(event);
-            return;
+        switch(event.type) {
+            case sf::Event::Closed:
+                game->window->close();
+                break;
+            case sf::Event::Resized:
+                checkResize(event);
+                break;
         }
     }
 }
@@ -203,7 +199,6 @@ void ExportImageScreen::update(const float dt)
     }
     else if (myButtons[3].isDoAction())
     {
-
         // open folder in current directory. folder name is variable
         std::string command = "cd " + imagesFolder + " && explorer .";
         system(command.c_str());
