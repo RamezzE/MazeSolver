@@ -61,4 +61,6 @@ private:
     std::vector<sf::Text> labels;
 
     std::string imagesFolder;
+
+    bool toggleBorder, toggleStart, toggleEnd, togglePath;
 };

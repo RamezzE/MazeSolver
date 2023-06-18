@@ -186,6 +186,11 @@ void TextBox::setTextFormat(sf::Color color, ushort size)
     calculateMaxCharactersDisplayed();
 }
 
+void TextBox::setTextColor(sf::Color color)
+{
+    text.setFillColor(color);
+}
+
 void TextBox::setTextLimit(int limit)
 {
     this->textLimit = limit;

@@ -35,7 +35,7 @@ public:
     float getWallThicknessFactor();
     float getWallThicknessScale();
     
-    bool threadRunning, choosingStartOrEnd, mazeGenerated, editMode, mouseClicked, pause;
+    bool threadRunning, choosingStartOrEnd, mazeGenerated, editMode, mouseClicked, pause, showStart, showEnd, showPath;
 
     int startX, startY, endX, endY;
 

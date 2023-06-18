@@ -24,6 +24,7 @@ public:
     void setBorder(float thickness, sf::Color color, sf::Color hoverColor, sf::Color selectedColor);
 
     void setTextFormat(sf::Color color, ushort size);
+    void setTextColor(sf::Color color);
 
     void setTextLimit(int limit);
 

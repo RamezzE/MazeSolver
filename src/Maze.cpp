@@ -16,7 +16,7 @@ Maze::Maze(int row, int col, sf::Vector2f size, sf::Vector2f position)
 
     speedFactor = 1;
 
-    threadRunning = choosingStartOrEnd = mazeGenerated = editMode = pause = false;
+    threadRunning = choosingStartOrEnd = mazeGenerated = editMode = pause = showStart = showEnd = showPath = false;
 
     startX = startY = mouseClickCounter = 0;
 
@@ -128,11 +128,12 @@ void Maze::setSpeedFactor(int factor)
 
 void Maze::setWallThicknessFactor(float factor)
 {
-    if (factor < 0.5f)
-        factor = 0.5f;
-
     thicknessFactor = factor;
     float thickness = thicknessFactor * thicknessScale * mazeH;
+
+    if (thickness < 1)
+        thickness = 1;
+
     for (int i = 0; i < maze.size(); i++)
         for (int j = 0; j < maze[i].size(); j++)
             maze[i][j].setWallThickness(thickness);
@@ -185,6 +186,14 @@ void Maze::update(sf::RenderWindow *window)
 
         if (mouseClickCounter == 0)
         {
+            visited.assign(row, std::vector<bool>(col, false));
+            correct_path.assign(row, std::vector<bool>(col, false));
+            min_correct_path.assign(row, std::vector<bool>(col, false));
+
+            for (int i = 0; i < row && i != endX; i++)
+                for (int j = 0; j < col && j != endY; j++)
+                    footprints[i][j].setFillColor(sf::Color::Transparent);
+            
             for (int i = 0; i < maze.size(); i++)
                 for (int j = 0; j < maze[i].size(); j++)
                     if (isMouseOver(maze[i][j], window))
@@ -195,7 +204,7 @@ void Maze::update(sf::RenderWindow *window)
                         mouseClickCounter++;
                         return;
                     }
-            
+
             return;
         }
 
@@ -241,16 +250,35 @@ void Maze::render(sf::RenderTexture *window)
 {
     for (int i = 0; i < maze.size(); i++)
         for (int j = 0; j < maze[i].size(); j++)
-        {
             maze[i][j].renderTiles(window);
-            // window->draw(footprints[i][j]);
-        }
 
     for (int i = 0; i < maze.size(); i++)
         for (int j = 0; j < maze[i].size(); j++)
             maze[i][j].renderLines(window);
 
-    // window->draw(player);
+    if (showPath)
+    {
+        if (min_correct_path.size() > 0)
+        {
+            for (int x = 0; x < maze.size(); x++)
+                for (int y = 0; y < maze[0].size(); y++)
+                    if (min_correct_path[x][y])
+                    {
+                        footprints[x][y].setFillColor(sf::Color(wallColor.r, wallColor.g, wallColor.b, 100));
+                        window->draw(footprints[x][y]);
+                    }
+        }
+    }
+
+    footprints[endX][endY].setFillColor(wallColor);
+    player.setFillColor(wallColor);
+
+    if (showStart)
+        window->draw(player);
+
+    if (showEnd)
+        window->draw(footprints[endX][endY]);
+
     window->draw(mazeBorder);
 }
 
@@ -273,6 +301,9 @@ void Maze::clearMaze()
         }
 
     mazeGenerated = false;
+    visited.assign(row, std::vector<bool>(col, false));
+    correct_path.assign(row, std::vector<bool>(col, false));
+    min_correct_path.assign(row, std::vector<bool>(col, false));
 }
 
 void Maze::generateMaze()
@@ -440,11 +471,10 @@ void Maze::solveMaze_helper(int i, int j, int endX, int endY) // i & j are start
     showPlayer(i, j);
     backTrackCheck(false, i, j);
 
-    if (!shortestPathAlgorithm)
-        if (reachedEnd)
-            return;
-        else if (steps > minSteps)
-            return;
+    if (!shortestPathAlgorithm && reachedEnd)
+        return;
+    else if (steps > minSteps)
+        return;
 
     if (visited[endX][endY]) // end point
     {

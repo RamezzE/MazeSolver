@@ -22,6 +22,7 @@ public:
     void setBorder(sf::Color color, int thickness);
     void setText(std::string text,sf::Color color);
     void setCharacterSize(int size);
+    void setTextColor(sf::Color color);
     void setBackgroundColor(sf::Color color);
     void setBackground(sf::Texture &texture);
 

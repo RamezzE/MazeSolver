@@ -145,7 +145,8 @@ void Button::render(sf::RenderWindow *window)
     window->draw(border);
     window->draw(text);
 
-    if (!enabled) {
+    if (!enabled)
+    {
         sf::RectangleShape disabledShade(border);
         disabledShade.setFillColor(sf::Color(0, 0, 0, 150));
         window->draw(disabledShade);
@@ -165,6 +166,13 @@ sf::FloatRect Button::getLocalBounds()
 sf::Vector2f Button::getPosition()
 {
     return border.getPosition();
+}
+
+void Button::setTextColor(sf::Color color)
+{
+    text.setFillColor(color);
+    textColor = color;
+    hoverColor = color;
 }
 
 sf::Color Button::getTextColor()
