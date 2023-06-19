@@ -16,6 +16,7 @@
 #include "TextBox.hpp"
 #include "Slider.hpp"
 #include "CheckBox.hpp"
+#include "SpriteButton.hpp"
 
 namespace fs = std::filesystem;
 
@@ -42,8 +43,6 @@ private:
 
 	ExportImageScreen *exportImageScreen;
 
-	
-
 	sf::Font font;
 
 	std::vector<std::thread> myThreads;
@@ -55,6 +54,9 @@ private:
 	std::vector<sf::Text> notesText;
 
 	bool resizeMaze, exportMaze, maximized;
+
+	SpriteButton myGithubIcon;
+	sf::Texture myGithubIconTexture;
 
 	std::vector<Slider*> sliders;
 	std::vector<sf::Text> labels;

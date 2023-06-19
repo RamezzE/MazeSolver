@@ -6,6 +6,11 @@ GameScreen::GameScreen(Game *myGame)
 {
     this->game = myGame;
 
+    myGithubIconTexture.loadFromFile(GITHUB_ICON_PATH);
+    myGithubIconTexture.setSmooth(true);
+
+    myGithubIcon.setTexture(myGithubIconTexture);
+
     for (int i = 0; i < 2; i++)
     {
         sliders.push_back(new Slider());
@@ -111,6 +116,12 @@ void GameScreen::init()
     background.setPosition(0, 0);
     background.setSize(sf::Vector2f(game->width, game->height));
 
+    sf::FloatRect temp = myGithubIcon.getLocalBounds();
+    myGithubIcon.setOrigin(sf::Vector2f(temp.left + temp.width, temp.top));
+    float scale = (float)game->height / (float)myGithubIcon.getLocalBounds().height;
+    scale /= 17;
+    myGithubIcon.setScale(sf::Vector2f(scale, scale));
+
     for (int i = 0; i < 6; i++)
         myButtons[i].setCharacterSize(game->height / 20);
 
@@ -158,8 +169,8 @@ void GameScreen::init()
 
     if (maximized)
     {
-        notesText[1].move(19.5, 0);
-        notesBackground[1].move(19.5, 0);
+        notesText[1].move(33, 0);
+        notesBackground[1].move(33, 0);
 
         for (int i = 0; i < 2; i++)
             notesBackground[i].setSize(sf::Vector2f(notesBackground[i].getSize().x * 0.9, notesBackground[i].getSize().y));
@@ -171,7 +182,9 @@ void GameScreen::init()
         checkboxes[i].setPosition(sf::Vector2f(myButtons[5].getPosition().x - myButtons[5].getGlobalBounds().width / 2 + checkboxes[i].getSize().x / 2, myButtons[5].getPosition().y + checkboxes[i].getSize().y * 2 * (i + 1)));
     }
 
-    labels[2].setPosition(checkboxes[0].getPosition().x + checkboxes[0].getSize().x * 0.8, checkboxes[0].getPosition().y - checkboxes[0].getSize().y / 1.3);
+    labels[2].setPosition(checkboxes[0].getPosition().x + checkboxes[0].getSize().x * 0.7, checkboxes[0].getPosition().y - checkboxes[0].getSize().y / 1.3);
+
+    myGithubIcon.setPosition(sf::Vector2f(myButtons[5].getGlobalBounds().left + myButtons[5].getGlobalBounds().width, game->height * 0.93));
 }
 
 void GameScreen::handleInput()
@@ -193,6 +206,7 @@ void GameScreen::handleInput()
             checkboxes[i].handleInput(event);
 
         maze->handleInput(event, game->window);
+        myGithubIcon.handleInput(event);
 
         if (event.type == sf::Event::Resized)
         {
@@ -297,6 +311,7 @@ void GameScreen::update(const float dt)
         checkboxes[i].update(game->window);
 
     maze->update(game->window);
+    myGithubIcon.update(game->window);
 
     if (checkboxes[0].isChecked())
         maze->editMode = true;
@@ -385,6 +400,15 @@ void GameScreen::update(const float dt)
         maze->choosingStartOrEnd = true;
         myButtons[5].didAction();
     }
+
+    if (myGithubIcon.isDoAction())
+    {
+
+        std::string link = "https://github.com/RamezzE/MazeSolver";
+        std::string command = "start " + link;
+        system(command.c_str());
+        myGithubIcon.didAction();
+    }
 }
 
 void GameScreen::draw()
@@ -413,6 +437,7 @@ void GameScreen::draw()
         checkboxes[i].render(game->window);
 
     maze->render(game->window);
+    myGithubIcon.render(game->window);
 }
 
 void GameScreen::checkResize(sf::Event event)
