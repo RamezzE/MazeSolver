@@ -85,6 +85,7 @@ GameScreen::GameScreen(Game *myGame)
     {
         notesBackground.push_back(sf::RectangleShape());
         notesBackground[i].setFillColor(sf::Color(12, 13, 23, 255));
+        notesBackground[i].setOutlineColor(sf::Color::Magenta);
     }
 
     for (int i = 0; i < 2; i++)
@@ -193,7 +194,8 @@ void GameScreen::handleInput()
 
         maze->handleInput(event, game->window);
 
-        if (event.type == sf::Event::Resized) {
+        if (event.type == sf::Event::Resized)
+        {
             checkResize(event);
             return;
         }
@@ -301,10 +303,27 @@ void GameScreen::update(const float dt)
     else
         maze->editMode = false;
 
-    if (maze->editMode)
-        notesText[1].setFillColor(sf::Color::Magenta);
+    if (maze->threadRunning)
+    {
+        notesText[0].setFillColor(sf::Color::Magenta);
+        notesBackground[0].setOutlineThickness(2);
+    }
     else
-        notesText[1].setFillColor(notesText[0].getFillColor());
+    {
+        notesText[0].setFillColor(sf::Color(255, 255, 255, 128));
+        notesBackground[0].setOutlineThickness(0);
+    }
+
+    if (maze->editMode)
+    {
+        notesText[1].setFillColor(sf::Color::Magenta);
+        notesBackground[1].setOutlineThickness(2);
+    }
+    else
+    {
+        notesText[1].setFillColor(sf::Color(255, 255, 255, 128));
+        notesBackground[1].setOutlineThickness(0);
+    }
 
     if (maze->threadRunning || maze->choosingStartOrEnd)
         checkboxes[0].setEnabled(false);

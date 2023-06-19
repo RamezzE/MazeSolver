@@ -190,10 +190,12 @@ void Maze::update(sf::RenderWindow *window)
             correct_path.assign(row, std::vector<bool>(col, false));
             min_correct_path.assign(row, std::vector<bool>(col, false));
 
-            for (int i = 0; i < row && i != endX; i++)
-                for (int j = 0; j < col && j != endY; j++)
+            for (int i = 0; i < row; i++)
+                for (int j = 0; j < col; j++)
                     footprints[i][j].setFillColor(sf::Color::Transparent);
-            
+
+            footprints[endX][endY].setFillColor(sf::Color::White);
+
             for (int i = 0; i < maze.size(); i++)
                 for (int j = 0; j < maze[i].size(); j++)
                     if (isMouseOver(maze[i][j], window))
@@ -434,14 +436,10 @@ void Maze::solveMaze()
 
     for (int i = 0; i < row; i++)
         for (int j = 0; j < col; j++)
-        {
             if (i == endX && j == endY)
-            {
                 footprints[i][j].setFillColor(sf::Color::White);
-                continue;
-            }
-            footprints[i][j].setFillColor(sf::Color::Transparent);
-        }
+            else
+                footprints[i][j].setFillColor(sf::Color::Transparent);
 
     steps = -1;
     minSteps = 999999;
@@ -453,8 +451,6 @@ void Maze::solveMaze()
         for (int y = 0; y < maze[0].size(); y++)
             if (min_correct_path[x][y])
                 footprints[x][y].setFillColor(sf::Color(0, 255, 0, 255));
-            else
-                footprints[x][y].setFillColor(sf::Color::Transparent);
 
     if (footprints[endX][endY].getFillColor() == sf::Color::Transparent)
         footprints[endX][endY].setFillColor(sf::Color::White);
@@ -474,7 +470,10 @@ void Maze::solveMaze_helper(int i, int j, int endX, int endY) // i & j are start
     if (!shortestPathAlgorithm && reachedEnd)
         return;
     else if (steps > minSteps)
+    {
+        backTrackCheck(true, i, j);
         return;
+    }
 
     if (visited[endX][endY]) // end point
     {
@@ -550,14 +549,10 @@ void Maze::findShortestPath()
 
     for (int i = 0; i < row; i++)
         for (int j = 0; j < col; j++)
-        {
             if (i == endX && j == endY)
-            {
                 footprints[i][j].setFillColor(sf::Color::White);
-                continue;
-            }
-            footprints[i][j].setFillColor(sf::Color::Transparent);
-        }
+            else
+                footprints[i][j].setFillColor(sf::Color::Transparent);
 
     steps = -1;
     minSteps = 999999;
@@ -569,8 +564,6 @@ void Maze::findShortestPath()
         for (int y = 0; y < maze[0].size(); y++)
             if (min_correct_path[x][y])
                 footprints[x][y].setFillColor(sf::Color(0, 255, 0, 255));
-            else
-                footprints[x][y].setFillColor(sf::Color::Transparent);
 
     if (footprints[endX][endY].getFillColor() == sf::Color::Transparent)
         footprints[endX][endY].setFillColor(sf::Color::White);

@@ -207,6 +207,12 @@ void ExportImageScreen::update(const float dt)
         myButtons[2].setTextColor(textColor);
         myButtons[2].setBackgroundColor(backgroundColor);
 
+        if (textColor == sf::Color::Black)
+            textColor = sf::Color::White;
+
+        for (int i = 0; i < checkboxes.size(); i++)
+            checkboxes[i].setCheckedColor(textColor);
+
         myButtons[2].didAction();
     }
     else if (myButtons[3].isDoAction())
@@ -267,16 +273,7 @@ void ExportImageScreen::previewMaze()
 
     setPreviewColor(tempMaze);
 
-    if (toggleBorder)
-    {
-        tempMaze.resize(sf::Vector2f(size.x - 10, size.y - 10));
-        tempMaze.setPosition(sf::Vector2f(5, 5));
-    }
-    else
-    {
-        tempMaze.resize(size);
-        tempMaze.setPosition(sf::Vector2f(0, 0));
-    }
+    tempMaze.resize(size);
 
     if (toggleStart)
         tempMaze.showStart = true;
@@ -289,7 +286,15 @@ void ExportImageScreen::previewMaze()
 
     tempMaze.setWallThicknessFactor(tempMaze.getWallThicknessFactor());
 
-    mazeRenderTexture.create(size.x, size.y);
+    if (toggleBorder) {
+        tempMaze.setPosition(sf::Vector2f(5,5));
+        mazeRenderTexture.create(size.x + 10, size.y + 10);
+    }
+    else {
+        tempMaze.setPosition(sf::Vector2f(0,0));
+        mazeRenderTexture.create(size.x, size.y);
+    }
+
     mazeRenderTexture.clear(sf::Color::White);
 
     tempMaze.render(&mazeRenderTexture);
