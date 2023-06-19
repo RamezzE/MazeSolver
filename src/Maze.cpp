@@ -188,7 +188,7 @@ void Maze::update(sf::RenderWindow *window)
         {
             visited.assign(row, std::vector<bool>(col, false));
             correct_path.assign(row, std::vector<bool>(col, false));
-            min_correct_path.assign(row, std::vector<bool>(col, false));
+            shortestPaths.clear();
 
             for (int i = 0; i < row; i++)
                 for (int j = 0; j < col; j++)
@@ -260,11 +260,11 @@ void Maze::render(sf::RenderTexture *window)
 
     if (showPath)
     {
-        if (min_correct_path.size() > 0)
+        if (shortestPaths.size() > 0)
         {
             for (int x = 0; x < maze.size(); x++)
                 for (int y = 0; y < maze[0].size(); y++)
-                    if (min_correct_path[x][y])
+                    if (shortestPaths[shortestPathIndex][x][y])
                     {
                         footprints[x][y].setFillColor(sf::Color(wallColor.r, wallColor.g, wallColor.b, 100));
                         window->draw(footprints[x][y]);
@@ -305,7 +305,7 @@ void Maze::clearMaze()
     mazeGenerated = false;
     visited.assign(row, std::vector<bool>(col, false));
     correct_path.assign(row, std::vector<bool>(col, false));
-    min_correct_path.assign(row, std::vector<bool>(col, false));
+    shortestPaths.clear();
 }
 
 void Maze::generateMaze()
@@ -429,10 +429,11 @@ void Maze::solveMaze()
     minSteps = 999999;
     reachedEnd = false;
     shortestPathAlgorithm = false;
+    shortestPathIndex = 0;
 
     visited.assign(row, std::vector<bool>(col, false));
     correct_path.assign(row, std::vector<bool>(col, false));
-    min_correct_path.assign(row, std::vector<bool>(col, false));
+    shortestPaths.clear();
 
     for (int i = 0; i < row; i++)
         for (int j = 0; j < col; j++)
@@ -446,11 +447,6 @@ void Maze::solveMaze()
     std::cout << "Solving Maze..." << std::endl;
 
     solveMaze_helper(startX, startY, endX, endY);
-
-    for (int x = 0; x < maze.size(); x++)
-        for (int y = 0; y < maze[0].size(); y++)
-            if (min_correct_path[x][y])
-                footprints[x][y].setFillColor(sf::Color(0, 255, 0, 255));
 
     if (footprints[endX][endY].getFillColor() == sf::Color::Transparent)
         footprints[endX][endY].setFillColor(sf::Color::White);
@@ -469,6 +465,7 @@ void Maze::solveMaze_helper(int i, int j, int endX, int endY) // i & j are start
 
     if (!shortestPathAlgorithm && reachedEnd)
         return;
+
     else if (steps > minSteps)
     {
         backTrackCheck(true, i, j);
@@ -479,11 +476,13 @@ void Maze::solveMaze_helper(int i, int j, int endX, int endY) // i & j are start
     {
         if (steps < minSteps)
         {
+            shortestPaths.clear();
             minSteps = steps;
-            for (int x = 0; x < maze.size(); x++)
-                for (int y = 0; y < maze[0].size(); y++)
-                    min_correct_path[x][y] = correct_path[x][y];
         }
+
+        if (steps <= minSteps)
+            shortestPaths.push_back(correct_path);
+
         if (!shortestPathAlgorithm)
             reachedEnd = true;
 
@@ -542,10 +541,11 @@ void Maze::findShortestPath()
     steps = -1;
     minSteps = 999999;
     reachedEnd = false;
+    shortestPathIndex = 0;
 
     visited.assign(row, std::vector<bool>(col, false));
     correct_path.assign(row, std::vector<bool>(col, false));
-    min_correct_path.assign(row, std::vector<bool>(col, false));
+    shortestPaths.clear();
 
     for (int i = 0; i < row; i++)
         for (int j = 0; j < col; j++)
@@ -562,11 +562,19 @@ void Maze::findShortestPath()
 
     for (int x = 0; x < maze.size(); x++)
         for (int y = 0; y < maze[0].size(); y++)
-            if (min_correct_path[x][y])
+            if (shortestPaths[shortestPathIndex][x][y])
                 footprints[x][y].setFillColor(sf::Color(0, 255, 0, 255));
 
     if (footprints[endX][endY].getFillColor() == sf::Color::Transparent)
         footprints[endX][endY].setFillColor(sf::Color::White);
+
+    if (!shortestPaths.empty())
+    {
+        footprints[endX][endY].setFillColor(sf::Color::Green);
+        std::cout << "There are " << shortestPaths.size() << " shortest paths" << std::endl;
+        std::cout << "Showing the first one" << std::endl;
+        std::cout << "Steps: " << minSteps << std::endl;
+    }
 
     std::cout << "Done" << std::endl;
     threadRunning = false;
@@ -616,4 +624,34 @@ float Maze::getWallThicknessFactor()
 float Maze::getWallThicknessScale()
 {
     return thicknessScale;
+}
+
+void Maze::nextShortestPath()
+{
+    if (shortestPathIndex == shortestPaths.size() - 1)
+        return;
+
+    shortestPathIndex++;
+
+    for (int i = 0; i < row; i++)
+        for (int j = 0; j < col; j++)
+            if (shortestPaths[shortestPathIndex][i][j])
+                footprints[i][j].setFillColor(sf::Color(0, 255, 0, 255));
+            else
+                footprints[i][j].setFillColor(sf::Color::Transparent);
+}
+
+void Maze::prevShortestPath()
+{
+    if (shortestPathIndex == 0)
+        return;
+
+    shortestPathIndex--;
+
+    for (int i = 0; i < row; i++)
+        for (int j = 0; j < col; j++)
+            if (shortestPaths[shortestPathIndex][i][j])
+                footprints[i][j].setFillColor(sf::Color(0, 255, 0, 255));
+            else
+                footprints[i][j].setFillColor(sf::Color::Transparent);
 }

@@ -58,6 +58,9 @@ private:
 	SpriteButton myGithubIcon;
 	sf::Texture myGithubIconTexture;
 
+	std::vector<SpriteButton> arrowButtons;
+	std::vector<sf::Texture> arrowButtonTextures;
+
 	std::vector<Slider*> sliders;
 	std::vector<sf::Text> labels;
 	std::vector<Button> myButtons;

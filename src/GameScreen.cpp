@@ -102,6 +102,15 @@ GameScreen::GameScreen(Game *myGame)
     notesText[0].setString("N.B.\nGenerate Maze: generates a\nmaze with only 1 solution\ninitially\n\nSolve Maze: stops at 1st\nsolution found");
     notesText[1].setString("N.B.\nOn any cell in Edit Mode:\nLeft click: toggle top wall\nRight click: toggle right wall\n\nSpeed 0 -> pause simulation\nMax Speed -> Instant effect");
 
+    for (int i = 0; i < 2; i++)
+        arrowButtonTextures.push_back(sf::Texture());
+
+    arrowButtonTextures[0].loadFromFile(LEFT_ARROW_IMAGE_PATH);
+    arrowButtonTextures[1].loadFromFile(RIGHT_ARROW_IMAGE_PATH);
+
+    for (int i = 0; i < 2; i++)
+        arrowButtons.push_back(SpriteButton(arrowButtonTextures[i]));
+
     init();
 }
 
@@ -122,6 +131,12 @@ void GameScreen::init()
     scale /= 17;
     myGithubIcon.setScale(sf::Vector2f(scale, scale));
 
+    scale = (float)game->height / (float)arrowButtons[0].getLocalBounds().height;
+    scale /= 17;
+
+    for (int i = 0; i < arrowButtons.size(); i++)
+        arrowButtons[i].setScale(sf::Vector2f(scale, scale));
+
     for (int i = 0; i < 6; i++)
         myButtons[i].setCharacterSize(game->height / 20);
 
@@ -134,6 +149,9 @@ void GameScreen::init()
 
     for (int i = 0; i < 3; i++)
         myButtons[i].setPosition(sf::Vector2f((pos.x + size.x) + (game->width - (pos.x + size.x)) / 4, game->height * 4 / 10 + myButtons[4].getLocalBounds().height * i * 0.7));
+
+    arrowButtons[0].setPosition(sf::Vector2f(myButtons[1].getPosition().x - myButtons[1].getGlobalBounds().width / 1.5, myButtons[1].getPosition().y - arrowButtons[0].getGlobalBounds().height / 2));
+    arrowButtons[1].setPosition(sf::Vector2f(myButtons[1].getPosition().x + myButtons[1].getGlobalBounds().width / 2.05, myButtons[1].getPosition().y - arrowButtons[1].getGlobalBounds().height / 2));
 
     textBoxes[0].setTextFormat(sf::Color::Magenta, game->height / 20);
     textBoxes[0].setSize(sf::Vector2f(textBoxes[0].getCharacterSize() * 1.3, textBoxes[0].getCharacterSize()));
@@ -205,6 +223,9 @@ void GameScreen::handleInput()
         for (int i = 0; i < checkboxes.size(); i++)
             checkboxes[i].handleInput(event);
 
+        for (int i = 0; i < arrowButtons.size(); i++)
+            arrowButtons[i].handleInput(event);
+
         maze->handleInput(event, game->window);
         myGithubIcon.handleInput(event);
 
@@ -222,17 +243,13 @@ void GameScreen::handleInput()
         }
 
         if (event.type == sf::Event::KeyPressed)
-        {
             if (event.key.code == sf::Keyboard::Enter)
-            {
                 if (textBoxes[0].isSelected())
                 {
                     textBoxes[0].setSelected(false);
                     resizeMaze = true;
                     return;
                 }
-            }
-        }
     }
 }
 
@@ -309,6 +326,9 @@ void GameScreen::update(const float dt)
 
     for (int i = 0; i < checkboxes.size(); i++)
         checkboxes[i].update(game->window);
+
+    for (int i = 0; i < arrowButtons.size(); i++)
+        arrowButtons[i].update(game->window);
 
     maze->update(game->window);
     myGithubIcon.update(game->window);
@@ -390,10 +410,14 @@ void GameScreen::update(const float dt)
     }
     else if (myButtons[4].isDoAction() || resizeMaze)
     {
-        N = stoi(textBoxes[0].getString());
-        maze->resizeGrid(N, N);
         myButtons[4].didAction();
         resizeMaze = false;
+
+        if (textBoxes[0].getString().empty() || textBoxes[0].getString() == "0")
+            return;
+
+        N = stoi(textBoxes[0].getString());
+        maze->resizeGrid(N, N);
     }
     else if (myButtons[5].isDoAction())
     {
@@ -403,11 +427,21 @@ void GameScreen::update(const float dt)
 
     if (myGithubIcon.isDoAction())
     {
-
         std::string link = "https://github.com/RamezzE/MazeSolver";
         std::string command = "start " + link;
         system(command.c_str());
         myGithubIcon.didAction();
+    }
+
+    if (arrowButtons[0].isDoAction())
+    {
+        maze->prevShortestPath();
+        arrowButtons[0].didAction();
+    }
+    else if (arrowButtons[1].isDoAction())
+    {
+        maze->nextShortestPath();
+        arrowButtons[1].didAction();
     }
 }
 
@@ -435,6 +469,15 @@ void GameScreen::draw()
 
     for (int i = 0; i < checkboxes.size(); i++)
         checkboxes[i].render(game->window);
+
+    if (!maze->shortestPaths.empty())
+    {
+        if (maze->shortestPathIndex > 0)
+            arrowButtons[0].render(game->window);
+
+        if (maze->shortestPathIndex < maze->shortestPaths.size() - 1)
+            arrowButtons[1].render(game->window);
+    }
 
     maze->render(game->window);
     myGithubIcon.render(game->window);

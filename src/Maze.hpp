@@ -39,6 +39,12 @@ public:
 
     int startX, startY, endX, endY;
 
+    std::vector<std::vector<std::vector<bool>>> shortestPaths;
+    int shortestPathIndex;
+
+    void nextShortestPath();
+    void prevShortestPath();
+
 private:
     int row, col, steps, minSteps;
 
@@ -54,7 +60,6 @@ private:
 
     std::vector<std::vector<bool>> visited;
     std::vector<std::vector<bool>> correct_path;
-    std::vector<std::vector<bool>> min_correct_path;
 
     sf::RectangleShape mazeBorder;
     sf::RectangleShape player;
