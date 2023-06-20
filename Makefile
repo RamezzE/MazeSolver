@@ -11,14 +11,20 @@ DEFINITON_FILE := $(wildcard $(SRC_DIR)/Definitions.hpp)
 
 CC = g++
 
+#DEBUG FLAGS:
 CFLAGS       := -std=c++17 -g -gdwarf-2 -fno-omit-frame-pointer
+
+#RELEASE FLAGS:
 # CFLAGS       := -std=c++17
 
 CPPFLAGS  := -I"SFML\include" -DSFML_STATIC 
 
 LDFLAGS := -L"SFML\lib" -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic
 
+#DEBUG FLAGS:
 LDLIBS := -lsfml-graphics-s-d -lsfml-window-s-d -lsfml-system-s-d -lopengl32 -lwinmm -lgdi32 -lsfml-main-d -lfreetype
+
+#RELEASE FLAGS
 # LDLIBS := -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lopengl32 -lwinmm -lgdi32 -lsfml-main -lfreetype -mwindows
 
 TARGET := "myApp.exe"
