@@ -1,6 +1,8 @@
 # Maze Solver
 
-A Maze generator & solver using backtracking. This project is written in C++ and SFML.
+Maze generator & solver using backtracking
+
+Written in C++ and SFML
 
 ![Maze Solver Preview (Custom) (2)](https://github.com/RamezzE/MazeSolver/assets/117018553/d085fe87-25e9-4ca6-a95d-1dbff72bda11)
 
@@ -21,31 +23,49 @@ A Maze generator & solver using backtracking. This project is written in C++ and
 8. [Exporting as an Image](#export-as-png)
 
 #### Maze Generation
-Randomly generate a maze with 1 solution initially as many times as you want.
+Randomly generate a maze with initially only 1 solution as many times as you want.
+
+![Generate Maze](https://github.com/RamezzE/MazeSolver/assets/117018553/70736759-a81c-477e-91d0-2b75ae6226f6)
 
 #### Solving the Maze
 
-Solve the maze with the first solution found.
+Solve the maze, backtracking at the first solution found.
+
+![Solve Maze](https://github.com/RamezzE/MazeSolver/assets/117018553/20e7a1a7-7b2b-422a-a341-fda032ba3899)
 
 #### Shortest Paths
 
 Find all the shortest paths in the maze and view them all with side arrows.
 
+![Find Shortest Paths](https://github.com/RamezzE/MazeSolver/assets/117018553/a47ff963-a086-4b5d-b6a3-a6c40b479f82)
+
 #### Resize the Grid
 
-You can resize the grid and regenerate the maze.
+Resize the grid and regenerate the maze.
+
+![Resize Grid](https://github.com/RamezzE/MazeSolver/assets/117018553/862d611b-1f15-41ed-a588-4e21aa3b13e7)
 
 #### Adjust Speed and Wall Thickness
 
-You can pause (speed to 0), slow down or speed up the simulation speed at any time.
-You can increase or decrease the wall thickness.
+Pause (speed to 0), slow down or speed up the simulation speed at any time.
+Increase or decrease the wall thickness.
+
+![Change Speed and Wall Thickness](https://github.com/RamezzE/MazeSolver/assets/117018553/184d2d6c-7ddc-4a03-b3a7-991b0c93e10e)
 
 #### Change Start and End
 Change start & end positions for the maze.
 
+![Change Start and End](https://github.com/RamezzE/MazeSolver/assets/117018553/79a24c1b-83c1-46c4-9edf-a364f5026fd2)
+
 #### Editing the maze
+
+In edit mode:
+
 Left mouse click toggles the visibility of the top wall of any cell.
+
 Right mouse click does the same for the right wall
+
+![Edit Maze](https://github.com/RamezzE/MazeSolver/assets/117018553/ba40b93f-bdd6-4b58-b91e-9309bff536b4)
 
 #### Export as PNG
 Export the maze as an image in PNG format.
