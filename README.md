@@ -10,6 +10,7 @@ Written in C++ and SFML
 
 - [Features](#features)
 - [Building](#building)
+- [License](#license)
 
 ## Features
 
@@ -74,6 +75,81 @@ Export the maze as an image in PNG format.
 ![Mon Jun 19 190427 2023](https://github.com/RamezzE/MazeSolver/assets/117018553/d02d0c28-9f72-4678-96fe-52060e51361f)
 ![x](https://github.com/RamezzE/MazeSolver/assets/117018553/965935ee-efa2-4729-9d4c-475bf89ab6f1)
 
+## Building
+1- [GNU Make](#gnu-make-method-used)
+
+2- [MS Build](#ms-build-visual-studio)
+
+### Prerequisites
+
+- SFML 2.5.1 or above www.sfml-dev.org
+- g++ 4.8 or above 
+
+#### Windows
+
+- You can download the latest version of MinGW g++ from this link (https://www.msys2.org/)
+
+#### Linux
+
+- You can run this command on linux to install SFML
+
+```
+$ sudo apt-get install libsfml-dev
+```
+
+### GNU Make (Method used)
+
+- Make sure that the SFML version you have is compativle with MinGW (ex: GCC 13.1.0 MinGW version)
+
+- Install GNU Make on your device (https://www.gnu.org/software/make/)
+
+- Clone this repository on your device
+
+- Edit the Makefile in the project directory to replace 'SFML_PATH' with your SFML folder path
+```
+# your SFML folder path goes here instead of SFML, for example: C:/Downloads/SFML-2.5.1
+SFML_PATH := SFML
+```
+
+- Open your terminal in your project directory where the Makefile exists
+
+- Run Make in your terminal:
+
+```
+$ make clean
+$ make
+```
+
+- You may need to add the MinGW bin folder to your PATH variable in the system environment variables
+
+### MS Build (Visual Studio)
+
+- Add the `</path/to/sfml/>/include` to your **additional C++ include directories**.
+- Add `</path/to/sfml/>/lib` to your **additional library directories**.
+- Add the SFML libraries used to your **additional dependencies** 
+
+    eg: 
+     ``
+     sfml-graphics-d.lib;sfml-system-d.lib;sfml-window-d.lib;
+     ``
+  
+   You can remove the ``-d`` if you do not need to debug
+
+- Add the dlls in your SFML path/bin along with your executable
+
+#### To build SFML statically 
+- Add the following to your **preprocesser definitons**
+  
+  ``SFML_STATIC``
+  
+- Add the following libraries to your **additional dependencies**
+
+  ``
+  sfml-graphics-s-d.lib sfml-window-s-d.lib sfml-system-s-d.lib opengl32.lib winmm.lib gdi32.lib sfml-main-d.lib freetype.lib
+  ``
+
+- You can remove the ``-d`` if you do not need to debug
+  
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
