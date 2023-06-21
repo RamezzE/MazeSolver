@@ -17,9 +17,15 @@ CFLAGS       := -std=c++17 -g -gdwarf-2 -fno-omit-frame-pointer
 #RELEASE FLAGS:
 # CFLAGS       := -std=c++17
 
-CPPFLAGS  := -I"SFML\include" -DSFML_STATIC 
+# your SFML folder path goes here, for example: C:/Downloads/SFML-2.5.1
+SFML_PATH := SFML
 
-LDFLAGS := -L"SFML\lib" -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic
+SFML_INCLUDE_PATH := "$(SFML_PATH)/include"
+SFML_LIBRARY_PATH := "$(SFML_PATH)/lib"
+
+CPPFLAGS := -I$(SFML_INCLUDE_PATH) -DSFML_STATIC
+
+LDFLAGS := -L$(SFML_LIBRARY_PATH) -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic
 
 #DEBUG FLAGS:
 LDLIBS := -lsfml-graphics-s-d -lsfml-window-s-d -lsfml-system-s-d -lopengl32 -lwinmm -lgdi32 -lsfml-main-d -lfreetype
