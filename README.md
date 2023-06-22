@@ -90,6 +90,10 @@ Export the maze as an image in PNG format.
 - You can download the latest version of MinGW g++ from this link (https://www.msys2.org/)
 
 #### Linux
+- You can run this command on linux to install g++
+```
+$ sudo apt install g++
+```
 
 - You can run this command on linux to install SFML
 
