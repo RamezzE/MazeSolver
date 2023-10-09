@@ -13,6 +13,9 @@ Game::Game() {
 	
 	window->create(sf::VideoMode(width, height), "Maze Solver", sf::Style::Default | sf::Style::Close);
 	window->setFramerateLimit(60);
+
+	icon.loadFromFile(ICON_PATH);
+	window->setIcon(icon.getSize().x,icon.getSize().y,icon.getPixelsPtr());
 }
 
 void Game::changeScreen(GameState* state) {

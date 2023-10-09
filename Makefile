@@ -12,10 +12,10 @@ DEFINITON_FILE := $(wildcard $(SRC_DIR)/Definitions.hpp)
 CC = g++
 
 #DEBUG FLAGS:
-CFLAGS       := -std=c++17 -g -gdwarf-2 -fno-omit-frame-pointer
+# CFLAGS       := -std=c++17 -g -gdwarf-2 -fno-omit-frame-pointer
 
 #RELEASE FLAGS:
-# CFLAGS       := -std=c++17
+CFLAGS       := -std=c++17
 
 # your SFML folder path goes here, for example: C:/Downloads/SFML-2.5.1
 SFML_PATH := SFML
@@ -28,10 +28,10 @@ CPPFLAGS := -I$(SFML_INCLUDE_PATH) -DSFML_STATIC
 LDFLAGS := -L$(SFML_LIBRARY_PATH) -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic
 
 #DEBUG FLAGS:
-LDLIBS := -lsfml-graphics-s-d -lsfml-window-s-d -lsfml-system-s-d -lopengl32 -lwinmm -lgdi32 -lsfml-main-d -lfreetype
+# LDLIBS := -lsfml-graphics-s-d -lsfml-window-s-d -lsfml-system-s-d -lopengl32 -lwinmm -lgdi32 -lsfml-main-d -lfreetype
 
 #RELEASE FLAGS
-# LDLIBS := -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lopengl32 -lwinmm -lgdi32 -lsfml-main -lfreetype -mwindows
+LDLIBS := -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lopengl32 -lwinmm -lgdi32 -lsfml-main -lfreetype -mwindows
 
 TARGET := "myApp.exe"
 
