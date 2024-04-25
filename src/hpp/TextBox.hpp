@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include <SFML/Graphics.hpp>
+#include "../../SFML/include/SFML/Graphics.hpp"
 
 typedef unsigned short ushort;
 

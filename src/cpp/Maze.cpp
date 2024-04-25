@@ -1,4 +1,4 @@
-#include "Maze.hpp"
+#include "../hpp/Maze.hpp"
 
 Maze::Maze(int row, int col, sf::Vector2f size, sf::Vector2f position)
 {

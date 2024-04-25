@@ -2,8 +2,8 @@
 #include <iostream>
 #include "SFML/Graphics.hpp"
 
-#include "Game.hpp"
-#include "GameState.hpp"
+#include "../hpp/Game.hpp"
+#include "../hpp/GameState.hpp"
 
 Game::Game() {
 

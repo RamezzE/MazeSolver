@@ -1,4 +1,4 @@
-#include "ExportImageScreen.hpp"
+#include "../hpp/ExportImageScreen.hpp"
 
 ExportImageScreen::ExportImageScreen(Game *myGame, Maze *maze)
 {

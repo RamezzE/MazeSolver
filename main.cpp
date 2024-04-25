@@ -1,9 +1,8 @@
 #include <iostream>
 #include <cstdlib>
 
-#include "GameScreen.hpp"
-#include "Game.hpp"
-#include "GameState.hpp"
+#include "src/hpp/GameScreen.hpp"
+#include "src/hpp/Game.hpp"
 
 int main()
 {

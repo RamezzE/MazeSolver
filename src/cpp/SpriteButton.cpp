@@ -1,4 +1,4 @@
-#include "SpriteButton.hpp"
+#include "../hpp/SpriteButton.hpp"
 
 #include <iostream>
 SpriteButton::SpriteButton()

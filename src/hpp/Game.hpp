@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "SFML/Graphics.hpp"
+#include "../../SFML/include/SFML/Graphics.hpp"
 
 #include "GameState.hpp"
 #include "Definitions.hpp"

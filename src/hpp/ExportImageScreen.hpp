@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include "../../SFML/include/SFML/Graphics.hpp"
 #include <filesystem>
 #include <vector>
 #include <string>

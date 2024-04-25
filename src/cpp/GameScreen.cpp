@@ -1,4 +1,4 @@
-#include "GameScreen.hpp"
+#include "../hpp/GameScreen.hpp"
 
 int N = 10;
 
